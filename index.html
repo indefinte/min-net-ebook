@@ -10,6 +10,7 @@
 <script type="text/javascript" src="js/extras/jquery.min.1.7.js"></script>
 <script type="text/javascript" src="js/extras/jquery-ui-1.8.20.custom.min.js"></script>
 <script type="text/javascript" src="js/extras/jquery.ui.draggable.min.js"></script>
+<script type="text/javascript" src="js/extras/jquery.ui.touch-punch.min.js"></script>
 <script type="text/javascript" src="js/extras/jquery.mousewheel.min.js"></script>
 <script type="text/javascript" src="js/extras/modernizr.2.5.3.min.js"></script>
 <script type="text/javascript" src="js/lib/hash.js"></script>
@@ -19,8 +20,9 @@
 <style>
 	#bookDiv { position: absolute; }
 	#noteDiv { position: absolute; width: 960px; height: 600px; z-index: 9999; left: 0; top: 0; display: none; }
-	.bGroup { position: absolute; left: 0; top: 70px; }
+	.bGroup { position: absolute; left: 0; top: 0; }
 	.btn {
+		float: left;
 		cursor: pointer;
 		border: 1px solid #5252FF;		
 		width: 32px;
@@ -30,7 +32,7 @@
 		-webkit-border-radius: 16px;
 		-moz-border-radius: 16px;
 		border-radius: 16px;
-		margin-top: 3px;		
+		margin-right: 2px;		
 	}	
 	.bExt { display: none; }
 	.bZoom.clk { background-color: #CAFF7A; }
@@ -153,7 +155,7 @@ function prepareSize() {
 	}
 	
 	window.nW = wW; // remove button width
-	window.nH = wH - 10; // remove slider height
+	window.nH = wH - 45; // remove slider height
 	
 	console.log('window.nW = ' + window.nW);
 	console.log('window.nH = ' + window.nH);
@@ -167,8 +169,8 @@ function prepareSize() {
 	$( "#slider" ).width(window.nW);
 	$('.turnjs-slider').width(window.nW)
 	
-	$('.sample-docs').width(window.nW).height(window.nH - 20);
-	$('.sample-docs .page').width(window.nW).height(window.nH - 20);
+	$('.sample-docs').width(window.nW).height(window.nH);
+	$('.sample-docs .page').width(window.nW).height(window.nH);
 	$('.sample-docs .tabs').width(window.nW)
 	$('.sample-docs .tabs > div').width(window.nW)
 	
@@ -179,7 +181,8 @@ function prepareSize() {
 	drawingAreaWidth = window.nW;
 	drawingAreaHeight = window.nH - 60;
 	
-	$('.bGroup').css('left',window.nW + 3 + window.fixLeft);	
+	$('.turnjs-slider').css({'margin':'0 auto'});
+	$('.bGroup').width(window.nW).height(35).css({'left':window.fixLeft,'top':window.nH+10});	
 }
 function btnEvent(){			
 	switch(true){
@@ -339,6 +342,8 @@ function loadApp() {
 			} else
 				setPreview(ui.value);
 			*/
+			stopZoom();
+			stopDraw();
 			moveBar(false);
 		},
 
