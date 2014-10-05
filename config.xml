@@ -7,10 +7,10 @@
 
     <!-- versionCode is optional and Android only -->
 
-    <name>名謙數位科技電子書範例</name>
+    <name>Min-Net 電子書</name>
 
     <description>
-        電子書範例應用程式
+        電子書展示應用
     </description>
 
     <author href="https://build.phonegap.com" email="shady.tw@gmail.com">
