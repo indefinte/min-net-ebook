@@ -101,16 +101,17 @@
 
 <script type="text/javascript">
 function saveCanvas(){
-	var page = "page" + $('.sample-docs').turn('page');
+	var page = "page" + getPage(); //$('.sample-docs').turn('page');
 	var data = $('#canvas')[0].toDataURL();
 	if (typeof (localStorage) !== "undefined") {
 		localStorage.setItem(page, data);
 	}else{
 		alert('Local Storage not supported.');
 	}
+	console.log('saveCanvas() = ' + page);
 }
 function loadCanvas(pg) {
-	var page = "page" + ((pg != null) ? pg : $('.sample-docs').turn('page'));  
+	var page = "page" + ((pg != null) ? pg : getPage()); //$('.sample-docs').turn('page'));  
 	var context = $('#canvas')[0].getContext('2d');
 	/*
 	var bgImage = new Image();
@@ -133,6 +134,7 @@ function loadCanvas(pg) {
 }
 function prepareSize() {
 	window.allPages = 26;
+	window.viewPages = 2;
 	// 1275 x 1651
 	var wW, oW = 0;
 	var wH, oH = 0;
@@ -150,9 +152,9 @@ function prepareSize() {
 	wH = oH - 40;
 	
 	if(wW > wH){
-		wW = Math.floor(wH * (1275 * 1) / 1651);
+		wW = Math.floor(wH * (1275 * window.viewPages) / 1651);
 	}else{
-		wH = Math.floor(wW * 1651 / (1275 * 1));
+		wH = Math.floor(wW * 1651 / (1275 * window.viewPages));
 	}
 	
 	window.nW = wW; // remove button width
@@ -167,8 +169,8 @@ function prepareSize() {
 	//$('#noteDiv').width(window.nW).height(window.nH).css('left', window.fixLeft);
 	$('#noteDiv').width(window.nW).height(window.nH);
 		
-	$( "#slider" ).width(window.nW);
-	$('.turnjs-slider').width(window.nW)
+	//$( "#slider" ).width(window.nW);
+	//$('.turnjs-slider').width(window.nW)
 	
 	$('.sample-docs').width(window.nW).height(window.nH);
 	$('.sample-docs .page').width(window.nW).height(window.nH);
@@ -184,6 +186,9 @@ function prepareSize() {
 	
 	$('.turnjs-slider').css({'margin':'0 auto'});
 	$('.bGroup').width(window.nW).height(35).css({'left':window.fixLeft,'top':window.nH+10});	
+}
+function getPage(){	
+	return Math.floor($('.sample-docs').turn('page') / window.viewPages) * window.viewPages;
 }
 function btnEvent(){			
 	switch(true){
@@ -407,7 +412,7 @@ function loadApp() {
 	// Create the flipbook
 
 	flipbook.turn({
-		display: 'single', //single , double
+		display: 'double', //single , double
 		elevation: 50,
 		acceleration: false,
 		gradients: true,
@@ -424,7 +429,7 @@ function loadApp() {
 			saveCanvas();
 			resetCanvas();
 			console.log('pg now = ' + page);
-			loadCanvas(page);
+			loadCanvas(Math.floor(page / window.viewPages) * window.viewPages);
 			
 			var book = $(this),
 			currentPage = book.turn('page'),
@@ -502,7 +507,7 @@ function loadApp() {
 
 		}
 	}
-	}). turn('page', 2);
+	}). turn('page', 1);
 
 
 	$('#slider').slider('option', 'max', numberOfViews(flipbook));

@@ -145,9 +145,10 @@ function startDraw(){
 		var touchEvent = e.originalEvent.changedTouches[0];        
 		var mouseX = touchEvent.pageX - this.offsetLeft - window.fixLeft;
 		var mouseY = touchEvent.pageY - this.offsetTop;
-		
-		addClick(mouseX, mouseY, false);
-		redraw();
+		if(paint==true){
+			addClick(mouseX, mouseY, false);
+			redraw();
+		}
 	});
     $('#canvas').on('touchmove',function(e){
 		var touchEvent = e.originalEvent.changedTouches[0];
@@ -155,7 +156,11 @@ function startDraw(){
 		addClick(touchEvent.pageX - this.offsetLeft - window.fixLeft, touchEvent.pageY - this.offsetTop, true);
 		redraw();
 	});
-		
+	$('#canvas').on('touchend',function(e){
+		paint = false;
+		//clearPoints
+		clearPoints();
+	});	
 	// Add mouse events
 	// ----------------
 	$('#canvas').on('mousedown',function(e)
@@ -177,6 +182,7 @@ function startDraw(){
 	$('#canvas').on('mouseup',function(e){
 		paint = false;
 	  	redraw();
+		clearPoints();	
 	});
 	$('#canvas').on('mouseleave',function(e){
 		paint = false;
@@ -187,6 +193,7 @@ function stopDraw(){
 	console.log('stopDraw');
 	$('#canvas').off('touchstart touchmove mousedown mousemove mouseup mouseleave');   
 	
+	clearPoints();
 	//ext
 	if($('.bTool').hasClass('clk')){
 		$('.bTool').removeClass('clk');
@@ -275,6 +282,15 @@ function addClick(x, y, dragging)
 /**
 * Clears the canvas.
 */
+function clearPoints(){
+	clickX = new Array();
+	clickY = new Array();
+	clickColor = new Array();
+	clickTool = new Array();
+	clickSize = new Array();
+	clickDrag = new Array();
+}
+
 function clearCanvas()
 {
 	context.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -282,12 +298,7 @@ function clearCanvas()
 
 function resetCanvas()
 {
-	clickX = new Array();
-	clickY = new Array();
-	clickColor = new Array();
-	clickTool = new Array();
-	clickSize = new Array();
-	clickDrag = new Array();
+	clearPoints();
 	clearCanvas();
 }
 /**
