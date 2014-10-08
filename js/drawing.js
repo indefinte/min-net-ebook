@@ -93,52 +93,13 @@ function prepareCanvas()
 	if(typeof G_vmlCanvasManager != 'undefined') {
 		canvas = G_vmlCanvasManager.initElement(canvas);
 	}
-	context = canvas.getContext("2d"); // Grab the 2d canvas context
-	// Note: The above code is a workaround for IE 8 and lower. Otherwise we could have used:
-	//     context = document.getElementById('canvas').getContext("2d");
-	
-	// Load images
-	// -----------
-	/*
-	crayonImage.onload = function() { resourceLoaded(); 
-	};
-	crayonImage.src = "images/crayon-outline.png";
-	//context.drawImage(crayonImage, 0, 0, 100, 100);
-	
-	markerImage.onload = function() { resourceLoaded(); 
-	};
-	markerImage.src = "images/marker-outline.png";
-	
-	eraserImage.onload = function() { resourceLoaded(); 
-	};
-	eraserImage.src = "images/eraser-outline.png";	
-	
-	crayonBackgroundImage.onload = function() { resourceLoaded(); 
-	};
-	crayonBackgroundImage.src = "images/crayon-background.png";
-	
-	markerBackgroundImage.onload = function() { resourceLoaded(); 
-	};
-	markerBackgroundImage.src = "images/marker-background.png";
-	
-	eraserBackgroundImage.onload = function() { resourceLoaded(); 
-	};
-	eraserBackgroundImage.src = "images/eraser-background.png";
-	*/
-	crayonTextureImage.onload = function() { resourceLoaded(); 
-	};
-	crayonTextureImage.src = "images/crayon-texture.png";
-	/*
-	outlineImage.onload = function() { resourceLoaded(); 
-	};
-	outlineImage.src = "images/watermelon-duck-outline.png";
-	*/	
+	context = canvas.getContext("2d"); // Grab the 2d canvas context	
 }
 
 function startDraw(){
 	console.log('startDraw');
 	
-	stopZoom();
+	//stopZoom();
 	
 	// Add touch events	
 	$('#canvas').on('touchstart',function(e){
@@ -202,17 +163,28 @@ function stopDraw(){
 }
 
 function startZoom(){
+	window.zoom = 2;
+	window.viewPages = 1;
+	var pg = getPage();
+	//prepareSize();
+	loadCanvas();
+	closeBook();
+	openBook('single', pg);
+	//console.log('pg = ' + pg);
+	
+	
+	
 	console.log('startZoom');
 	
-	var page = $('.sample-docs').turn('page');
-	console.log('page = ' + page);
+	
+	//console.log('page = ' + page);
 	
 	stopDraw();
-	$('.sample-docs').turn("disable", true);
+	//$('.sample-docs').turn('disable', true);
 	
-	$('.p' + page + ' img').css({'width':window.nW * 2,'height':window.nH * 2});
-	$('#noteDiv').css({'width':window.nW * 2,'height':window.nH * 2});
-	$('#noteDiv canvas').css({'width':window.nW * 2,'height':window.nH * 2});
+	//$('.p' + page + '>img').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom});	
+	$('#noteDiv').css({'width':window.dW * window.zoom,'height':window.dH * window.zoom});
+	$('#noteDiv canvas').css({'width':window.dW * window.zoom,'height':window.dH * window.zoom});
 	
 	$('#noteDiv').draggable({
 		drag: function(event, ui) {
@@ -223,39 +195,51 @@ function startZoom(){
 			if (ui.position.top < window.nH - $(this).height()) {
 				ui.position.top = window.nH - $(this).height();
 			}  
-			console.log('$(this).width() = ' + $(this).width());
-			console.log('ui.position.left = ' + ui.position.left);
+			//console.log('$(this).width() = ' + $(this).width());
+			//console.log('ui.position.left = ' + ui.position.left);
 			
 			if (ui.position.left > 0) {
 				ui.position.left = 0;
 			}
 			if (ui.position.left < window.nW - $(this).width()) {
 				ui.position.left = window.nW - $(this).width();
-			}    
+			} 
+			
+			var page = $('.sample-docs').turn('page');
 			$('.p' + page +' img').offset({ top: ui.position.top, left: (ui.position.left + window.fixLeft) });
 		},
 		scroll: false,
-		disable: false
+		cursor: 'move'
 	});
 }
 
 function stopZoom(){
+	window.zoom = 1;
+	window.viewPages = 2;
+	var pg = getPage();
+	//prepareSize();
+	loadCanvas();
+	closeBook();
+	openBook('double', pg);
+
+	
+	
 	console.log('stopZoom');
 	
 	var page = $('.sample-docs').turn('page');	
-	console.log('page = ' + page);
+	//console.log('page = ' + page);
 	
-	$('.sample-docs').turn("disable", false);
+	//$('.sample-docs').turn('disable', false);
 	
-	$('.p' + page +' img').css({'width':window.nW,'height':window.nH});
-	$('#noteDiv').css({'width':window.nW,'height':window.nH});
-	$('#noteDiv canvas').css({'width':window.nW,'height':window.nH});
+	//$('.p' + page +' img').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom});
+	$('#noteDiv').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom});
+	$('#noteDiv canvas').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom});
 	
 	//$('#noteDiv').draggable('disable');
 	$('#noteDiv').draggable('destroy');
 	
 	$('#noteDiv').offset({ top: 0, left: window.fixLeft });
-	$('.p' + page +' img').offset({ top: 0, left: window.fixLeft });
+	//$('.p' + page +' img').offset({ top: 0, left: window.fixLeft });
 	
 	//ext
 	if($('.bZoom').hasClass('clk')){

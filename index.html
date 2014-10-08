@@ -18,7 +18,31 @@
 <!--[if IE]><script type="text/javascript" src="js/excanvas.js"></script><![endif]-->
 
 <style>
-	body { margin: 0; padding: 0; }
+	body { 
+		margin: 0; 
+		padding: 0; 	
+		-webkit-user-select: none; //disables selection
+        -webkit-tap-highlight-color: rgba(0,0,0,0); // disables the actual highlight
+        -webkit-touch-callout: none;  //disables the download and save popup
+	}
+		
+	::-webkit-scrollbar { width: 5px; height: 5px; background: url(images/blank.gif); }
+	::-webkit-scrollbar-thumb:horizontal { background: rgba(0, 0, 0, 0.2); border-style: solid; border-width: 1px; border-color: rgba(255, 255, 255, 0.25); border-radius: 2px; }
+	::-webkit-scrollbar-thumb:horizontal:hover { background: rgb(0, 0, 0); border-style: solid; border-width: 1px; border-color: rgb(255, 255, 255); border-radius: 2px; box-shadow: 0 0 1px 2px rgba(255, 255, 255, 0.4); }
+	::-webkit-scrollbar-thumb:vertical { background: rgba(0, 0, 0, 0.2); border-style: solid; border-width: 1px; border-color: rgba(255, 255, 255, 0.25); border-radius: 2px; }
+	::-webkit-scrollbar-thumb:vertical:hover { background: rgb(0, 0, 0); border-style: solid; border-width: 1px; border-color: rgb(255, 255, 255);  border-radius: 2px; box-shadow: 0 0 1px 2px rgba(255, 255, 255, 0.4); }	
+	
+	.np { position: relative; text-align: right; width: 52px; margin: -24px 0 10px 3px; padding: 0 4px; background-color: rgba(0,102,153,.5); }	
+	.pGroup { position: absolute; width: 80px; left: -75px; top: 60px; bottom: 40px; z-index: 999; overflow: auto; -webkit-transition: left .4s; transition: left .4s; }
+	.pGroup img {
+		cursor: pointer;
+		width: 60px;
+		height: auto;
+		border: 1px solid #000;
+		margin: 2px;
+	}
+	.pGroup:hover{ left: 0; }
+
 	#bookDiv { position: absolute; }
 	#noteDiv { position: absolute; width: 960px; height: 600px; z-index: 9999; left: 0; top: 0; display: none; }
 	.bGroup { position: absolute; left: 0; top: 0; }
@@ -36,10 +60,10 @@
 		margin-right: 2px;		
 	}	
 	.bExt { display: none; }
-	.bZoom.clk { background-color: #CAFF7A; }
+	.bZoom.clk { background-color: #CAFF7A; background-image: url(images/zoomout.png); }
 	.bNote.clk { background-color: #CCE6FF; }
 	.bTool.clk { background-color: #CCE6FF; }
-	.bZoom { color: #003870; background-color: #B1FF3D; background-repeat: no-repeat; background-position: center; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAADdAAAA3QFwU6IHAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAHVQTFRF////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANuvKZAAAACZ0Uk5TAAIFBggLFhobKzA9S05QYWp2f4CDh7Cyt7jExcbJy9Dd5ebw+v1b20x6AAABBElEQVQ4y62S0WKCMAxFM0SKClaRyVAEhXr+/xP3AEjbobzsvqX3tEmTiPSKkqxo2yJLIplTcDIMMlnw1982WGq2vn8wQJWnSqV5BZiDd99Ap8dId2CcN4IGLrGsj+eHiIjEF2jsOk7QxbK7A/1B3EE2+ZEBLbsn170as4CZfptAJes731/TpQqSV5BBLkeuli+5naOAVM7s7bpTKF5BC0oeKBtQ0LqAJwcoIPUBJ0UGuQ84RSZQ+YDzzb5RjtxGDa225LV6HNbk+8OaH/cm/Lwwqi3DTysX3sAhvKVVN/AIZ+03bc/+hDKvsBxeK/+DWC0RWhaIWhaI98BA6PeArHRd6+AXafgqvsE/FT0AAAAASUVORK5CYII41f3ddf9e98fb50824737ec401e7f2e0'); }		
+	.bZoom { color: #003870; background-color: #B1FF3D; background-repeat: no-repeat; background-position: center; background-image: url(images/zoomin.png); }		
 	.bNote { color: #003870; background-color: #29B8FF; background-repeat: no-repeat; background-position: center; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAYCAYAAACbU/80AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOFAAADhQBBi3XKwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAOZSURBVEiJrdZZ6FdVEAfwz+g/t8iFMjVXcC0rNBAEowSlJMmMouXBwJbHhIJK8KFIopcEy0BKioIgkgiywkoM24ikzTYyNXPXRFJS01ymh3OK66+fKw1c7rnnzsz5nu/MnDmRmSKiEyZiGkZgCAaiG/bgB/xYn1WZuVsbiYjzMAVjcVl9D8Fx7MRmbMKHWJGZB6ICmIO78TI+xVbsysxjEXFhw+HlmIFnsTAz/2osPh1P4TusboDenJlZ/QzAVZiJbpl5g8yEBzA3M53uQV88h7XV0Rgsx0cYf4Y+xuHdOrYYh5sA0LXudhxGoeMkTr7FPtx2koU6MBQ929geqIzJ+sytP1/C0cZ8Vvo/w4Ia405VdyF+agF+K97AJ1hZw/omPqjf/SqARHa0yaX+6NwydxDX4jrMwn24o6kQERMrwLcwJzO31vmumXm4RXfAP+N2ANpJD7yOFZifmRva6HyemZMiYgIejIix6ILDEdGl6hzBXU2jMwVwUKmSW7AkIrZl5qwWnfER8TTWKLR/k5lHmgxEREdmHj1XBp5XGLgf69rofI+pmIDZGBMRHTjYZCAizpmBO3GzEufdSi405Uo8o5wBL2JNZh5pKpwNA0fwSx33UGI5T6n3m3Csjc0aJVF7KqGaHRGjcX7V34MtEfFY06gdgHuVU7AV/VLcjkVKWT3SYjcc89ELS7EE6zLzQLXvjUvwOwadCsAUTI+IixDohP1Yj/fxEAa3sdtZ//1RGbgHwyOih9ILdmMLnjwdA8vxdmbuaez+AoxW+sA8vIMnWuz6tzDwQgsDfevO9zU30A7AZEyNiMHV2VFsVM7+ZXhU6ZiU07FXCwO7cGNlYWRE9FOSeGtl4NfTMbAaX2NHZu6PiM5KSx2hHCILlENpXWa+FhH7ql0fPIwrlBxZicWZuT0iutfdD1LCeUoAozEJgyNiIA4pdb9eScBNSqNqlT+V8vsSV1cgMyNiqEL7NmyvmzslgB14T6Fsu1KGoyqwx5V2/Aq+arHrrLTnRUoj+kIJ0Ub0bjBwqHXBE7rhGfTyXpjc+J5W34NxPTqf4X3gpN1QRPTBpdiLDc1ulpn7sOo/u8jcoiRZ0093jMTFWFt1TpAmgBkRcY0Su0GN+eMRsUnJg5+VK9eyzNzZslgvJQQTlHCNqqxEQ2ev0jN++3euUnG2chwfK/U+HMMwXbmQnJWcK4D/TUK5ip+LDFM65FC8qlxKj5+tk78Bwingl11imTYAAAAASUVORK5CYII0f2f66e8b4f46b5c4f7814321a33e8da'); }		
 	.bTool { color: #003870; background-color: #29B8FF; background-repeat: no-repeat; background-position: center; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOcAAADnABlNk0xAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAANsSURBVFiFtddLbFVVFAbgLyCoiQktDwtUKI9Ci0aM1miMEMUHA02MDBACRKJOjHHmAHWgiTpwYIw6deAjYWZMDCZGJzIxURShIshDwQLVoMFqW1oNkOtgrxtujvvec1rsYKe3Z52z/v+s/f9rr6NWq5nKhVn4FH3ZeIUE0y4DvA17UMNZrJ4QAXTgW6yfJPjXuIhXMIQz6K1EIMAPYQRjuHcC4O34JsC3x7XbMYxBdLckgGtxEIfRifdwDndXAJ+NvQH+aCG2BqMYQFeWAObhexzFwoZqjMTDa1uAz8E+XMC2Qmxm/F0XFf0JncUEc3EAx9DZkLQ/hFQLInc2Ad8f4FsKsW6cwKr4f0fk2p2zzFc4hWVRzn0N4PU1jDsKxPsDfHOT6ryOX/BYVHIQPc18uwc/NwGvr79wG66I+87jkUy+a/BC3PdhPHsaK1qJsC1U3Ay8voZwK7ZjYyFHH6aHfo7gM0nIp5S5oMFKeyuQ+AO3FJ6dFluyM35vi3tPYtlEGlG71IjKSJzFTYVnOyWlf4Lx2NKl/8Go6Ov9FUj8jhvjjT/HA3giYiewJJu/YmcrWrHZ+g03YGvs999RhcVNc1ch0GC17yqQOINVQeIIFrXMWxH8OryFhVKXLCPxK3pE97ssAlgUZRwPa9XPiTISg8LrkyaALhwP8PUN1zvwQwUSp7F8UgSwJNQ7hvsz8fnSaVlG4mTOfi0JYKnk2zHcl4k/jFexIIRWRuJLzK9EQDqEBsJG9zRcvwovYiaul3z/cgjzWAmBx/F8KQEsl3r1OawrxNqlhvQRZuC5SP5UuOTHDPCAdEj1YldLAlgRohmVmXywWBpWDuKLSHzUpbmh7pZGAhtxpXQSvoSbswSwUrLNKO5qIrhhbMKTkfywmJgKJI/jXbyNrQ2xlXgtk1uPNCiMKIxb+Bib4veDsTXnpWE1L6pk3Q/wDGYVYrsUxnzYHW+0I5Nsg+SEDVJrvRBb0FHaYFiL9/GGNJI9hH8UXMWlY3OsUXjSGb4gyj4e4Acwrww8I+w38We86Ds5DXSFYkexJq7tjFI/HeD9mDsR8IyLno2cV+dc0B1CHJY+IqZLA2pNmvnmTBa8QGRGlkAEe6XjdEj6nLoojWWz/w/wLKEMw9XSiFWTvu3apwo8SyBI9Emf1G1TCV6r1fwLxnxqIp0rcv8AAAAASUVORK5CYIIb52c395bd5726a2c2abdd0c57e612184'); }		
 	.bClear { color: #003870; background-color: #E0E0E0; background-repeat: no-repeat; background-position: center; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAACOAAAAjgFr39bJAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAWVQTFRF////AAAAAAAAAAAAMwAAJAAAHBwAGhoaIBAQHA4OGw0NGg0NGAwMIBULHxQKHBMJGxIJGhIJIhERIBAQHw8PHg8PHQ8PIRQNHxMMHhIMIRALHxAKHRQPHBMOHhENHhENHRAMHBAMHxQMHhMLHRIPHRIOHBIOHxEOHxMNHhIMHhIMHRIMHREMHREOHhMOHxINHxINHxINHhEMHREMHREMHxMMHxMOHhIOHhIOHRIOHhENHhENHxIMHhIOHxEOHxENHhMNHhMNHRINHhIMHhEMHREMHxMOHhINHhINHRINHxINHhINHhENHhMNHhIOHhINHhINHhENHhMNHhINHhIOHhINHhINHhINHhINHhMOHhIOHRINHxINHhINHhINHhINHhINHhINHhINHhMNHhINHhINHhINHhINHhINHhINHhINHhINHhINHhINHhIMHhINHhMNHhINHhINHhINHhINHhINHhINCJ03twAAAHZ0Uk5TAAECBAUHCQoQEhMUFRgZGxwdHiAhIiMnKSovMTQ3Ozw+P0FDRkdISlFUVVdYWV5iY2RnaGprbG9wcXZ4fYGEhYiJi5GSk5aYmpyeoKKjqqussLK0u73DxMXOz9DR0tPU1tfY3N7f4+Tm6e7v8vP19vj5+vv9/mqvdrkAAAE2SURBVBgZpcGHNwJxAAfwrwauOoQrI1tGUmRnZlQ4e8sKUcq++/79xsPF0+95z+eD/wjuOSBiz9ENkVluQUS+1+shssA1iDgftFqIxLkCEdfzswsiKuMQqdEenBBZ5TxE6vQ7GSKbjEDEw5wNApWSfwSFtSZ5H0Zh4zpJXUEBVpXvIviVMpN5TPPNNn4w2xuHFg/0zKRsDpyTXIZBSqXTdyRvd+f8Vrwy+RKcgsFyeTHW5/O6TfjiYAh5+p+ayivdMgxtbEceyz5TalcxDNNZK5RoCJ+kZGJoYHi0AR/kXAxYJz34VLHDq8EqAI5uCYB6IwMxagoM/dnj4Ej0JNMJSBtaL4CSQD3yla3r5KFi75i4um4BSgHUmfCNM3xEnUwt2QDvqQnms2b8VN3jteFNkQKgGH/yApnFP0hF+CCUAAAAAElFTkSuQmCC6fb01dc86583aac0c8b381ad08800158'); }
@@ -98,43 +122,74 @@
 	<div class="btn bExt bYellow" title="黃色筆刷"></div>
 	<div class="btn bExt bBrown" title="棕色筆刷"></div>
 </div>
+<div class="pGroup"></div>
 
 <script type="text/javascript">
-function saveCanvas(){
-	var page = "page" + getPage(); //$('.sample-docs').turn('page');
-	var data = $('#canvas')[0].toDataURL();
-	if (typeof (localStorage) !== "undefined") {
-		localStorage.setItem(page, data);
-	}else{
-		alert('Local Storage not supported.');
+document.onselectstart = new function(){ return false; }
+$(window).resize(function(){ location.reload(); });
+
+window.allPages = 26;
+window.viewPages = 2;
+window.zoom = 1;
+
+function loadPages(){	
+	$('<img src="pages/covers.png" alt="covers">').appendTo('.pGroup').after('<div class="np">封面</div>');
+	for(var i = 0; i < window.allPages; i++){
+		$('<img src="pages/' + i + '.png" alt="' + i + '">').appendTo('.pGroup').after('<div class="np">' + (i+1) + '</div>');
 	}
-	console.log('saveCanvas() = ' + page);
+}
+function saveCanvas(){
+	if(window.viewPages == 2){
+		var page = "page" + getPage(); //$('.sample-docs').turn('page');
+		var data = $('#canvas')[0].toDataURL();
+		if (typeof (localStorage) !== "undefined") {
+			localStorage.setItem(page, data);
+		}else{
+			alert('Local Storage not supported.');
+		}
+	}
 }
 function loadCanvas(pg) {
-	var page = "page" + ((pg != null) ? pg : getPage()); //$('.sample-docs').turn('page'));  
-	var context = $('#canvas')[0].getContext('2d');
-	/*
-	var bgImage = new Image();
-	bgImage.onload = function() {
-		context.drawImage(this, 0, 0, window.nW, window.nH);
-	};
-	bgImage.src = './pages/' + pg + '.png';
-	*/
-	
-	var data = localStorage.getItem(page);
-	if(data != null){			
-		var imageObj = new Image();
-		imageObj.onload = function() {
-			//fix: size area
-			//context.drawImage(this, 0, 0);
-			context.drawImage(this, 0, 0, window.nW, window.nH);
-		};
-		imageObj.src = data;
+	resetCanvas();
+	if(window.viewPages == 2){
+		$('#canvas').show();
+		
+		var page = "page" + ((pg != null) ? pg : getPage()); //$('.sample-docs').turn('page'));  
+		var context = $('#canvas')[0].getContext('2d');
+		var data = localStorage.getItem(page);
+		if(data != null){			
+			var imageObj = new Image();
+			imageObj.onload = function() {
+				context.drawImage(this, 0, 0, window.nW, window.nH);
+			};
+			imageObj.src = data;
+		}
+	}else{		
+		$('#canvas').show();
+		
+		var pg = (pg != null) ? pg : getPage();
+		pg = parseInt(pg);
+		gpg = (pg % 2 == 1) ? pg - 1 : pg; 
+		
+		var page = "page" + gpg;
+		var context = $('#canvas')[0].getContext('2d');
+		var data = localStorage.getItem(page);
+		if(data != null){			
+			var imageObj = new Image();
+			imageObj.onload = function() {				
+				if(pg % 2 == 0){
+					console.log('pg1 = '+pg);
+					context.drawImage(this, 0, 0, window.dW, window.dH * window.zoom, 0, 0, Math.floor(window.dW * window.zoom), Math.floor(window.dH * window.zoom));
+				}else{
+					console.log('pg2 = '+pg);
+					context.drawImage(this, window.dW, 0, window.dW, window.dH * window.zoom, 0, 0, Math.floor(window.dW * window.zoom), Math.floor(window.dH * window.zoom));
+				}
+			};
+			imageObj.src = data;
+		}
 	}
 }
 function prepareSize() {
-	window.allPages = 26;
-	window.viewPages = 2;
 	// 1275 x 1651
 	var wW, oW = 0;
 	var wH, oH = 0;
@@ -146,6 +201,7 @@ function prepareSize() {
 	}else{
 		oW = window.innerWidth; //document.documentElement.clientWidth;
 		oH = window.innerHeight; //document.documentElement.clientHeight;
+		console.log('window.innerWidth = ' + window.innerWidth);
 	}
 	
 	wW = oW - 40;
@@ -160,8 +216,10 @@ function prepareSize() {
 	window.nW = wW; // remove button width
 	window.nH = wH - 45; // remove slider height
 	
-	console.log('window.nW = ' + window.nW);
-	console.log('window.nH = ' + window.nH);
+	window.dW = Math.floor(window.nW / 2);
+	window.dH = Math.floor(window.nH);
+	//console.log('window.nW = ' + window.nW);
+	//console.log('window.nH = ' + window.nH);
 	
 	window.fixLeft = Math.floor((oW - window.nW) / 2);
 	
@@ -190,15 +248,26 @@ function prepareSize() {
 function getPage(){	
 	return Math.floor($('.sample-docs').turn('page') / window.viewPages) * window.viewPages;
 }
+function btnPageEvent(e){			
+	var target = $(e.target);
+	if (target.is('img')){
+		var pg = parseInt(target.attr('alt')) || 0;
+		pg = (pg == 'covers') ? 1 : pg + 2;
+		$('.sample-docs').turn('page', pg);
+	}	
+}
 function btnEvent(){			
 	switch(true){
 		case $(this).hasClass('bZoom'):
 			if($(this).hasClass('clk')){
 				$(this).removeClass('clk');
-				stopZoom();
+				stopZoom();								
+				$('.bTool').show();
 			}else{	
 				$(this).addClass('clk');						
 				startZoom();
+				$('.bTool').hide();
+				$('.bExt').hide();
 			}
 		break;
 		case $(this).hasClass('bNote'):
@@ -260,9 +329,12 @@ function btnEvent(){
 	}		
 }
 function loadApp() {
+	loadPages();
 	prepareSize();
 	prepareCanvas();
+	
 	$('.btn').on('click swipeone', btnEvent);
+	$('.pGroup').on('click swipeone', btnPageEvent);
 	
 	$('#noteDiv').show();
 	loadCanvas();		
@@ -275,63 +347,6 @@ function loadApp() {
 		setTimeout(loadApp, 10);
 		return;
 	}
-
-	// Mousewheel
-
-	//$('#book-zoom').mousewheel(function(event, delta, deltaX, deltaY) {		
-		/*
-		//console.log('deltaX = ' + deltaX);
-		console.log('deltaY = ' + deltaY);
-						
-		var zoom = $('.sample-docs').turn('zoom');
-		console.log('Current zoom: ' + zoom);
-		
-		if(deltaY > 0){
-			zoom += 0.1;
-		}else if(deltaY < 0){
-			zoom -= 0.1;
-		}
-		zoom = (zoom < 1) ? 1 : zoom;
-		zoom = (zoom > 5) ? 5 : zoom;		
-		$('.sample-docs').turn('zoom', zoom);
-		
-		console.log('New zoom: ' + zoom);
-		*/
-		/*
-		var data = $(this).data(),
-			step = window.allPages,
-			flipbook = $('.sample-docs'),
-			actualPos = $('#slider').slider('value')*step;
-		
-		console.log('actualPos = ' + $('#slider').slider('value')*step);
-		console.log('data.scrollX = ' + data.scrollX);
-			
-		if (typeof(data.scrollX)==='undefined') {
-			data.scrollX = actualPos;
-			data.scrollPage = flipbook.turn('page');
-		}
-
-		data.scrollX = Math.min($( "#slider" ).slider('option', 'max')*step,
-			Math.max(0, data.scrollX + deltaX));
-
-		var actualView = Math.round(data.scrollX/step),
-			page = Math.min(flipbook.turn('pages'), Math.max(1, actualView*2 - 2));
-
-		if ($.inArray(data.scrollPage, flipbook.turn('view', page))==-1) {
-			data.scrollPage = page;
-			flipbook.turn('page', page);
-		}
-
-		if (data.scrollTimer)
-			clearInterval(data.scrollTimer);
-		
-		data.scrollTimer = setTimeout(function(){
-			data.scrollX = undefined;
-			data.scrollPage = undefined;
-			data.scrollTimer = undefined;
-		}, 1000);
-		*/
-	//});
 
 	// Slider
 
@@ -348,8 +363,8 @@ function loadApp() {
 			} else
 				setPreview(ui.value);
 			*/
-			stopZoom();
-			stopDraw();
+			//stopZoom();
+			//stopDraw();
 			moveBar(false);
 		},
 
@@ -410,105 +425,7 @@ function loadApp() {
 	});
 
 	// Create the flipbook
-
-	flipbook.turn({
-		display: 'double', //single , double
-		elevation: 50,
-		acceleration: false,
-		gradients: true,
-		autoCenter: true,
-		duration: 1000,
-		pages: window.allPages,
-		when: {
-
-		turning: function(e, page, view) {
-			//ext
-			stopDraw();
-			
-			console.log('pg pre = ' + $('.sample-docs').turn('page'));
-			saveCanvas();
-			resetCanvas();
-			console.log('pg now = ' + page);
-			loadCanvas(Math.floor(page / window.viewPages) * window.viewPages);
-			
-			var book = $(this),
-			currentPage = book.turn('page'),
-			pages = book.turn('pages');
-				
-			if (currentPage>3 && currentPage<pages-3) {
-				if (page==1) {
-					book.turn('page', 2).turn('stop').turn('page', page);
-					e.preventDefault();
-					return;
-				} else if (page==pages) {
-					book.turn('page', pages-1).turn('stop').turn('page', page);
-					e.preventDefault();
-					return;
-				}
-			} else if (page>3 && page<pages-3) {
-				if (currentPage==1) {
-					book.turn('page', 2).turn('stop').turn('page', page);
-					e.preventDefault();
-					return;
-				} else if (currentPage==pages) {
-					book.turn('page', pages-1).turn('stop').turn('page', page);
-					e.preventDefault();
-					return;
-				}
-			}
-			
-			Hash.go('page/'+page).update();
-			
-			if (page==1 || page==pages){
-				$('.sample-docs .tabs').hide();
-			}
-
-		},
-
-		turned: function(e, page, view) {
-
-			var book = $(this);
-
-			$('#slider').slider('value', getViewNumber(book, page));
-			
-			if (page!=1 && page!=book.turn('pages'))
-				$('.sample-docs .tabs').fadeIn(500).css('z-index','19999');
-			else
-				$('.sample-docs .tabs').hide();
-
-			
-			book.turn('center');
-			updateTabs();
-
-		},
-
-		start: function(e, pageObj) {
-	
-			moveBar(true);
-
-		},
-
-		end: function(e, pageObj) {
-		
-			var book = $(this);
-
-			setTimeout(function() {
-				$('#slider').slider('value', getViewNumber(book));
-			}, 1);
-
-			moveBar(false);
-
-		},
-
-		missing: function (e, pages) {
-
-			for (var i = 0; i < pages.length; i++)
-				addPage(pages[i], $(this));
-
-		}
-	}
-	}). turn('page', 1);
-
+	openBook();
 
 	$('#slider').slider('option', 'max', numberOfViews(flipbook));
 
@@ -518,6 +435,124 @@ function loadApp() {
 	// Show canvas
 
 	$('#bookDiv').css({visibility: 'visible'});
+}
+
+function closeBook(){
+	$('.sample-docs').turn('destroy');
+}
+
+function openBook(o, t){
+	var opt = o || 'double';
+	var target = t || 1;
+	$('.sample-docs').turn({
+		display: opt, //single , double
+		elevation: 50,
+		acceleration: false,
+		gradients: true,
+		autoCenter: true,
+		duration: 1000,
+		pages: window.allPages,
+		when: {
+
+			turning: function(e, page, view) {
+				//ext
+				//stopDraw();
+				
+				//console.log('pg pre = ' + $('.sample-docs').turn('page'));
+				saveCanvas();
+				resetCanvas();
+				//console.log('pg now = ' + page);
+				if(opt == 'single'){
+					loadCanvas(page);
+				}else{
+					loadCanvas(Math.floor(page / window.viewPages) * window.viewPages);
+				}				
+				
+				var book = $(this),
+				currentPage = book.turn('page'),
+				pages = book.turn('pages');
+				
+				if(opt == 'double'){
+					if (currentPage>3 && currentPage<pages-3) {
+						if (page==1) {
+							book.turn('page', 2).turn('stop').turn('page', page);
+							e.preventDefault();
+							return;
+						} else if (page==pages) {
+							book.turn('page', pages-1).turn('stop').turn('page', page);
+							e.preventDefault();
+							return;
+						}
+					} else if (page>3 && page<pages-3) {
+						if (currentPage==1) {
+							book.turn('page', 2).turn('stop').turn('page', page);
+							e.preventDefault();
+							return;
+						} else if (currentPage==pages) {
+							book.turn('page', pages-1).turn('stop').turn('page', page);
+							e.preventDefault();
+							return;
+						}
+					}
+				}
+				
+				Hash.go('page/'+page).update();
+				
+				if (page==1 || page==pages){
+					$('.sample-docs .tabs').hide();
+				}
+
+			},
+
+			turned: function(e, page, view) {
+
+				var book = $(this);
+
+				$('#slider').slider('value', getViewNumber(book, page));
+				
+				if (page!=1 && page!=book.turn('pages'))
+					$('.sample-docs .tabs').fadeIn(500).css('z-index','19999');
+				else
+					$('.sample-docs .tabs').hide();
+
+				
+				book.turn('center');
+				updateTabs();
+				
+				//zoom				
+				//if(opt == 'single'){
+					//$('.p' + page + '>img').offset({ top: 0, left: window.fixLeft });
+					//$('.p' + page + '>img').animate({'width':Math.floor(window.dW * window.zoom),'height':Math.floor(window.dH * window.zoom)}, 400);	
+					//$('.p' + page + '>img').css({'width':Math.floor(window.dW * window.zoom),'height':Math.floor(window.dH * window.zoom)});						
+				//}
+			},
+
+			start: function(e, pageObj) {
+		
+				moveBar(true);
+
+			},
+
+			end: function(e, pageObj) {
+			
+				var book = $(this);
+
+				setTimeout(function() {
+					$('#slider').slider('value', getViewNumber(book));
+				}, 1);
+
+				moveBar(false);
+
+			},
+
+			missing: function (e, pages) {
+
+				for (var i = 0; i < pages.length; i++)
+					addPage(pages[i], $(this));
+
+			}
+		}
+	}).turn('page', target);
 }
 
 // Hide canvas

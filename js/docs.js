@@ -5,12 +5,18 @@ function loadPage(page) {
 	var img = $('<img />');
 	img.load(function() {
 		var container = $('.sample-docs .p'+page);
-		img.css({width: container.width(), height: container.height()});
+		if(window.viewPages == 1){
+			//$('.p' + page + '>img').css({'width':Math.floor(window.dW * window.zoom),'height':Math.floor(window.dH * window.zoom)});						
+			img.css({width: Math.floor(window.dW * window.zoom), height: Math.floor(window.dH * window.zoom)});
+		}else{
+			img.css({width: container.width(), height: container.height()});
+		}
 		img.appendTo($('.sample-docs .p'+page));
 		container.find('.loader').remove();
 	});
-
-	img.attr('src', 'pages/' +  (page-2) + '.png');
+	var target = page - 2;
+	target = target < 0 ? 'covers' : target; 
+	img.attr('src', 'pages/' + target + '.png');
 
 }
 
@@ -31,7 +37,7 @@ function addPage(page, book) {
 function updateTabs() {
 	
 	//var tabs = {7: 'Clases', 12:'Constructor', 14:'Properties', 16:'Methods', 23:'Events'},
-	var tabs = {2: '索引', 4:'公園地景'},
+	var tabs = {1:'封面', 3:'目錄', 4:'公園地景', 25:'最後頁'},
 		left = [],
 		right = [],
 		book = $('.sample-docs'),
