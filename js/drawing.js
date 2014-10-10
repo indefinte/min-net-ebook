@@ -84,7 +84,7 @@ function resourceLoaded()
 function prepareCanvas()
 {
 	// Create the canvas (Neccessary for IE because it doesn't know what a canvas element is)
-	var canvasDiv = document.getElementById('noteDiv');
+	var canvasDiv = document.getElementById('drawDiv');
 	canvas = document.createElement('canvas');
 	canvas.setAttribute('width', canvasWidth);
 	canvas.setAttribute('height', canvasHeight);
@@ -183,10 +183,10 @@ function startZoom(){
 	//$('.sample-docs').turn('disable', true);
 	
 	//$('.p' + page + '>img').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom});	
-	$('#noteDiv').css({'width':window.dW * window.zoom,'height':window.dH * window.zoom});
-	$('#noteDiv canvas').css({'width':window.dW * window.zoom,'height':window.dH * window.zoom});
+	$('#drawDiv').css({'width':window.dW * window.zoom,'height':window.dH * window.zoom});
+	$('#drawDiv canvas').css({'width':window.dW * window.zoom,'height':window.dH * window.zoom});
 	
-	$('#noteDiv').draggable({
+	$('#drawDiv').draggable({
 		drag: function(event, ui) {
 			//console.log('ui.position.left  = ' + ui.position.left );        
 			if (ui.position.top > 0) {
@@ -217,29 +217,16 @@ function stopZoom(){
 	window.zoom = 1;
 	window.viewPages = 2;
 	var pg = getPage();
-	//prepareSize();
 	loadCanvas();
 	closeBook();
 	openBook('double', pg);
-
 	
-	
-	console.log('stopZoom');
-	
-	var page = $('.sample-docs').turn('page');	
-	//console.log('page = ' + page);
-	
-	//$('.sample-docs').turn('disable', false);
-	
-	//$('.p' + page +' img').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom});
-	$('#noteDiv').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom});
-	$('#noteDiv canvas').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom});
-	
-	//$('#noteDiv').draggable('disable');
-	$('#noteDiv').draggable('destroy');
-	
-	$('#noteDiv').offset({ top: 0, left: window.fixLeft });
-	//$('.p' + page +' img').offset({ top: 0, left: window.fixLeft });
+	console.log('stopZoom');	
+		
+	$('#drawDiv').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom});
+	$('#drawDiv canvas').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom});	
+	$('#drawDiv').draggable('destroy');
+	$('#drawDiv').offset({ top: 0, left: window.fixLeft });
 	
 	//ext
 	if($('.bZoom').hasClass('clk')){

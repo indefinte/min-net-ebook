@@ -47,13 +47,14 @@ function updateTabs() {
 	for (var page in tabs) {	
 	
 		var isHere = $.inArray(parseInt(page, 10), view)!=-1;
+		/*
 		if (isHere){
 			right.push('<a href="#page/' + page + '" class="on">' + tabs[page] + '</a>');
 		}else{
 			right.push('<a href="#page/' + page + '">' + tabs[page] + '</a>');
 		}
+		*/
 		
-		/*
 		if (page>actualPage && !isHere)
 			right.push('<a href="#page/' + page + '">' + tabs[page] + '</a>');
 		else if (isHere) {
@@ -64,7 +65,7 @@ function updateTabs() {
 				right.push('<a href="#page/' + page + '" class="on">' + tabs[page] + '</a>');
 		} else
 			left.push('<a href="#page/' + page + '">' + tabs[page] + '</a>');
-		*/
+		
 
 	}
 
