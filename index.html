@@ -1,9 +1,9 @@
 <!doctype html>
-<!--[if lt IE 7 ]> <html lang="en" class="ie6"> <![endif]-->
-<!--[if IE 7 ]>    <html lang="en" class="ie7"> <![endif]-->
-<!--[if IE 8 ]>    <html lang="en" class="ie8"> <![endif]-->
-<!--[if IE 9 ]>    <html lang="en" class="ie9"> <![endif]-->
-<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->
+<!--[if lt IE 7 ]> <html lang="zh" class="ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="zh" class="ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="zh" class="ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="zh" class="ie9"> <![endif]-->
+<!--[if !IE]><!--> <html lang="zh"> <!--<![endif]-->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -183,6 +183,7 @@ function addNote(){
 	jPrompt('', '', '加入註記', function(m) {
 		if(m){
 			addNoteDiv(m);
+			saveNotes();
 		};
 	});	
 }
@@ -244,50 +245,109 @@ function addNoteDiv(s,l,t){
 	}
 	if (o.offset().left > window.nW - o.width()) {
 		o.offset({ left: window.nW - o.width()});
-	}
-	
-	saveNotes();
+	}		
 }
 function saveNotes(){
-	//fix: 雙頁模式
-	if(window.viewPages == 2){}
-	
-	var page = "note" + getPage();
-	var ar = new Array();
-	$('.nt').each(function(i){
-		var offset = $(this).offset();
-		ar[i] = offset.left + '|||||' + offset.top + '|||||' + $(this).text();
-	});
-	var data = ar.join('@@@@@');
-	
-	if (typeof (localStorage) !== "undefined") {
-		localStorage.setItem(page, data);
-	}else{
-		alert('Local Storage not supported.');
-	}
+	//雙頁模式
+	if(window.viewPages == 2){
+		var halfW = Math.floor(window.nW / 2);
+		//左
+		var page = "note" + getPage();
+		var ar = new Array();
+		var il = 0;
+		$('.nt').each(function(){
+			var offset = $(this).offset();
+			if(offset.left < halfW){
+				ar[il++] = (offset.left * window.viewPages) + '|||||' + offset.top + '|||||' + $(this).text();
+			}
+		});
+		var data = ar.join('@@@@@');
+		
+		if (typeof (localStorage) !== "undefined") {
+			localStorage.setItem(page, data);
+			//console.log(page+','+ data)
+		}else{
+			alert('Local Storage not supported.');
+		}
+		//右
+		var pageExt = "note" + (getPage() + 1);
+		var arExt = new Array();
+		var ir = 0;
+		$('.nt').each(function(){
+			var offset = $(this).offset();
+			if(offset.left >= halfW){
+				//console.log('offset.left '+offset.left+' >= halfW ' + halfW)
+				arExt[ir++] = ((offset.left - halfW) * window.viewPages) + '|||||' + offset.top + '|||||' + $(this).text();
+			}
+		});
+		var dataExt = arExt.join('@@@@@');
+		
+		if (typeof (localStorage) !== "undefined") {
+			localStorage.setItem(pageExt, dataExt);
+			//console.log(pageExt+','+ dataExt)
+		}else{
+			alert('Local Storage not supported.');
+		}
+		
+	}else{		
+		var page = "note" + getPage();
+		var ar = new Array();
+		$('.nt').each(function(i){
+			var offset = $(this).offset();
+			ar[i] = offset.left + '|||||' + offset.top + '|||||' + $(this).text();
+		});
+		var data = ar.join('@@@@@');
+		
+		if (typeof (localStorage) !== "undefined") {
+			localStorage.setItem(page, data);
+		}else{
+			alert('Local Storage not supported.');
+		}		
+	}	
 }
 function loadNotes(pg){
 	resetNotes();
-	
-	var page = "note" + ((pg != null) ? pg : getPage());  
-	var data = localStorage.getItem(page);	
-	if(data != null && data != ''){			
-		var ar = data.split('@@@@@');
-		if(ar != null){
-			for(var i = 0; i < ar.length; i++){
-				if(ar[i] != ''){
-					var note = ar[i].split('|||||');
-					if(note != null && note.length == 3){
-						//console.log(ar[i]);
-						addNoteDiv(note[2],note[0],note[1]);
-					}				
+	//雙頁模式
+	if(window.viewPages == 2){
+		var halfW = Math.floor(window.nW / 2);
+		//console.log('loadNotes');
+		var page = "note" + ((pg != null) ? pg : getPage());  
+		var data = localStorage.getItem(page);	
+		if(data != null && data != ''){			
+			var ar = data.split('@@@@@');
+			if(ar != null){
+				for(var i = 0; i < ar.length; i++){
+					if(ar[i] != ''){
+						var note = ar[i].split('|||||');
+						if(note != null && note.length == 3){
+							//console.log(ar[i]);
+							addNoteDiv(note[2], Math.floor(parseInt(note[0]) / window.viewPages), parseInt(note[1]));
+						}				
+					}
 				}
 			}
 		}
-	}
-	//雙頁模式
-	if(window.viewPages == 2){
-		var page = "note" + ((pg != null) ? pg : getPage()) + 1;  
+		//console.log('left = '+page);
+		
+		var pageExt = "note" + (((pg != null) ? pg : getPage()) + 1);  
+		var dataExt = localStorage.getItem(pageExt);	
+		if(dataExt != null && dataExt != ''){			
+			var arExt = dataExt.split('@@@@@');
+			if(arExt != null){
+				for(var i = 0; i < arExt.length; i++){
+					if(arExt[i] != ''){
+						var noteExt = arExt[i].split('|||||');
+						if(noteExt != null && noteExt.length == 3){
+							//console.log(ar[i]);
+							addNoteDiv(noteExt[2], Math.floor(parseInt(noteExt[0]) / window.viewPages) + halfW, parseInt(noteExt[1]));
+						}				
+					}
+				}
+			}
+		}
+		//console.log('right = '+pageExt);
+	}else{
+		var page = "note" + ((pg != null) ? pg : getPage());  
 		var data = localStorage.getItem(page);	
 		if(data != null && data != ''){			
 			var ar = data.split('@@@@@');
@@ -310,9 +370,9 @@ function resetNotes(){
 }
 
 function loadPages(){	
-	$('<img src="pages/covers.png" alt="covers">').appendTo('.pGroup').after('<div class="np" alt="covers">封面</div>');
+	$('<img src="thumb/covers.png" alt="covers">').appendTo('.pGroup').after('<div class="np" alt="covers">封面</div>');
 	for(var i = 0; i < window.allPages; i++){
-		$('<img src="pages/' + i + '.png" alt="' + i + '">').appendTo('.pGroup').after('<div class="np" alt="' + i + '">' + (i+1) + '</div>');
+		$('<img src="thumb/' + i + '.png" alt="' + i + '">').appendTo('.pGroup').after('<div class="np" alt="' + i + '">' + (i+1) + '</div>');
 	}
 }
 function saveCanvas(){
@@ -334,6 +394,7 @@ function loadCanvas(pg) {
 		var page = "page" + ((pg != null) ? pg : getPage()); //$('.sample-docs').turn('page'));  
 		var context = $('#canvas')[0].getContext('2d');
 		var data = localStorage.getItem(page);
+		//console.log('loadCanvas = ' + page);
 		if(data != null){			
 			var imageObj = new Image();
 			imageObj.onload = function() {
@@ -342,7 +403,7 @@ function loadCanvas(pg) {
 			imageObj.src = data;
 		}
 		
-		loadNotes(pg);
+		
 	}else{		
 		$('#canvas').show();
 		
@@ -367,7 +428,7 @@ function loadCanvas(pg) {
 			imageObj.src = data;
 		}
 		
-		loadNotes(pg);
+		
 	}
 }
 function prepareSize() {
@@ -378,7 +439,7 @@ function prepareSize() {
 	if(isFs){
 		oW = window.screen.width;
 		oH = window.screen.height;
-		console.log('is fullscreen');
+		//console.log('is fullscreen');
 	}else{
 		oW = window.innerWidth; //document.documentElement.clientWidth;
 		oH = window.innerHeight; //document.documentElement.clientHeight;
@@ -427,8 +488,15 @@ function prepareSize() {
 	
 	window.originStyle = $('.sample-docs').attr('style');
 }
-function getPage(){	
-	return Math.floor($('.sample-docs').turn('page') / window.viewPages) * window.viewPages;
+function getPage(){
+	//雙頁模式
+	if(window.viewPages == 2){
+		//console.log('window.viewPages == 2 :: ' + (Math.floor($('.sample-docs').turn('page') / window.viewPages) * window.viewPages));
+		return Math.floor($('.sample-docs').turn('page') / window.viewPages) * window.viewPages;
+	}else{
+		//console.log('window.viewPages == 1 :: ' + ($('.sample-docs').turn('page')));
+		return parseInt($('.sample-docs').turn('page'));
+	}
 }
 function btnPageEvent(e){			
 	var target = $(e.target);
@@ -599,11 +667,11 @@ function loadApp() {
       accept: '.nt',
       activeClass: 'ui-state-highlight',
 	  	hoverClass: 'clk',
-      drop: function(event, ui) {
-				//console.log(ui.draggable);
-      	ui.draggable.remove();
-				saveNotes();
-      }
+		drop: function(event, ui) {
+			//console.log(ui.draggable);
+			ui.draggable.remove();
+			saveNotes();
+		}
    });
 }
 
@@ -626,17 +694,9 @@ function openBook(o, t){
 
 			turning: function(e, page, view) {
 				//ext
-				//stopDraw();
-				
-				//console.log('pg pre = ' + $('.sample-docs').turn('page'));
-				saveCanvas();
+				//stopDraw();				
 				resetCanvas();
-				//console.log('pg now = ' + page);
-				if(opt == 'single'){
-					loadCanvas(page);
-				}else{
-					loadCanvas(Math.floor(page / window.viewPages) * window.viewPages);
-				}				
+				resetNotes();
 				
 				var book = $(this),
 				currentPage = book.turn('page'),
@@ -699,6 +759,15 @@ function openBook(o, t){
 					$('.bTrash').hide();//.fadeOut();
 					$('.bTool').hide();//.fadeOut();	
 				}
+				
+				if(window.viewPages == 1){
+					loadCanvas(page);
+					loadNotes(page);
+				}else{
+					var pageExt = Math.floor(page / window.viewPages) * window.viewPages;
+					loadCanvas(pageExt);
+					loadNotes(pageExt);
+				}	
 			},
 
 			start: function(e, pageObj) {

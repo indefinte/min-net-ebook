@@ -217,7 +217,9 @@ function stopZoom(){
 	window.zoom = 1;
 	window.viewPages = 2;
 	var pg = getPage();
-	loadCanvas();
+	//var pageExt = Math.floor(pg / window.viewPages) * window.viewPages;
+	loadCanvas(pg);
+	
 	closeBook();
 	openBook('double', pg);
 	
