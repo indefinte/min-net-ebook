@@ -749,11 +749,9 @@ function openBook(o, t){
 				var book = $(this),
 				currentPage = book.turn('page'),
 				pages = book.turn('pages');
-				
-				console.log('s0');
+				/*
 				if(opt == 'double'){
-					console.log('s01');
-					/*
+					
 					if (currentPage>3 && currentPage<pages-3) {
 						console.log('s10');
 						if (page==1) {
@@ -781,9 +779,9 @@ function openBook(o, t){
 							return;
 						}
 					}
-					*/
+					
 				}
-				
+				*/
 				Hash.go('page/'+page).update();
 				
 				if (page==1 || page==pages){
