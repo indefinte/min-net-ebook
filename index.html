@@ -45,7 +45,7 @@
 	}
 	.pGroup:hover{ left: 0; }
 
-	#bookDiv { position: absolute; }
+	#bookDiv { position: absolute; z-index: 1; }
 	#drawDiv { position: absolute; width: 960px; height: 600px; z-index: 9999; left: 0; top: 0; display: none; }
 	#noteDive { position: absolute; left: 0; top: 0; }
 	.nt {
@@ -174,7 +174,7 @@
 document.onselectstart = new function(){ return false; }
 $(window).resize(function(){ location.reload(); });
 
-window.allPages = 26;
+window.allPages = 28; //26[0-25 + covers]
 window.viewPages = 2;
 window.zoom = 1;
 window.originStyle = '';
@@ -191,7 +191,7 @@ function addNoteDiv(s,l,t){
 	var l = l || Math.floor(window.nW / 2);
 	var t = t || Math.floor(window.nH / 2);
 	//fix pos
-	l = l > window.nW ? Math.floor(window.nW / 2) : l;
+	l = l > window.nW ? Math.floor(window.nW / 2) + window.fixLeft : l + window.fixLeft;
 	t = t > window.nH ? Math.floor(window.nH / 2) : t;
 	
 	var o = $('<div class="nt">' + s + '</div>').appendTo('#noteDiv').draggable({
@@ -215,7 +215,7 @@ function addNoteDiv(s,l,t){
 			}
 						
 			if(window.nW < $(this).width()){
-				//可視範圍 < 文件範圍
+				//可視範圍 < 文件範圍				
 				if (ui.position.left > 0) {
 					ui.position.left = 0;
 				}
@@ -223,7 +223,7 @@ function addNoteDiv(s,l,t){
 					ui.position.left = window.nW - $(this).width();
 				}   
 			}else{
-				//可視範圍 > 文件範圍
+				//可視範圍 > 文件範圍				
 				if (ui.position.left < 0) {
 					ui.position.left = 0;
 				}
@@ -238,13 +238,13 @@ function addNoteDiv(s,l,t){
 		scroll: false,
 		cursor: 'move'		
 	}).offset({ top: t, left: l }).css({'min-width':Math.floor(window.nW / 6) + 'px','max-width':Math.floor(window.nW / 3) + 'px','max-height':Math.floor(window.nH / 3) + 'px'});
-	//console.log(o);
+	//console.log(o.offset().left + ' , ' + window.fixLeft);
 	//pos fix ext
 	if (o.offset().top > window.nH - o.height()) {
-		o.offset({ top: window.nH - o.height()});
+		o.offset({ top: window.nH - o.height() });
 	}
 	if (o.offset().left > window.nW - o.width()) {
-		o.offset({ left: window.nW - o.width()});
+		o.offset({ left: window.nW - o.width() + window.fixLeft });
 	}		
 }
 function saveNotes(){
@@ -371,25 +371,68 @@ function resetNotes(){
 
 function loadPages(){	
 	$('<img src="thumb/covers.png" alt="covers">').appendTo('.pGroup').after('<div class="np" alt="covers">封面</div>');
-	for(var i = 0; i < window.allPages; i++){
+	for(var i = 0; i < window.allPages - 2; i++){
 		$('<img src="thumb/' + i + '.png" alt="' + i + '">').appendTo('.pGroup').after('<div class="np" alt="' + i + '">' + (i+1) + '</div>');
 	}
 }
-function saveCanvas(){
-	if(window.viewPages == 2){
-		var page = "page" + getPage(); //$('.sample-docs').turn('page');
+function saveCanvas(){	
+	if(window.viewPages == 2){	
+		//雙頁模式
+		var page = "page" + getPage();
 		var data = $('#canvas')[0].toDataURL();
 		if (typeof (localStorage) !== "undefined") {
 			localStorage.setItem(page, data);
 		}else{
 			alert('Local Storage not supported.');
 		}
-	}
+	}else{
+		var pg = (pg != null) ? pg : getPage();
+		pg = parseInt(pg);
+		var gpg = (pg % 2 == 1) ? pg - 1 : pg; 
+		
+		var page = "page" + gpg;
+		//單頁模式
+		var pageTurn = parseInt($('.sample-docs').turn('page'));
+		
+		var canvasSrc = document.createElement('canvas');
+		canvasSrc.width = window.nW;
+		canvasSrc.height = window.nH;
+		var contextSrc = canvasSrc.getContext("2d");
+
+		var dataSrc = localStorage.getItem(page);
+		if(dataSrc != null){			
+			var imageObj = new Image();
+			imageObj.onload = function() {
+				contextSrc.drawImage(this, 0, 0, window.nW, window.nH);
+				if(pageTurn % 2 == 0){
+					//左頁
+					//console.log('左頁');
+					contextSrc.clearRect(0, 0, window.dW, window.dH);
+					contextSrc.drawImage(canvas, 0, 0, Math.floor(window.dW * window.zoom), Math.floor(window.dH * window.zoom), 0, 0, window.dW, window.dH);
+				}else{
+					//右頁						
+					//console.log('右頁');					
+					contextSrc.clearRect(window.dW, 0, window.dW, window.dH);
+					contextSrc.drawImage(canvas, 0, 0, Math.floor(window.dW * window.zoom), Math.floor(window.dH * window.zoom), window.dW, 0, window.dW, window.dH);
+				}
+				
+				var data = canvasSrc.toDataURL();
+				if (typeof (localStorage) !== "undefined") {
+					localStorage.setItem(page, data);
+				}else{
+					alert('Local Storage not supported.');
+				}
+			};
+			imageObj.src = dataSrc;
+		}
+		
+		
+	}	
 }
 function loadCanvas(pg) {
 	resetCanvas();
 	if(window.viewPages == 2){
-		$('#canvas').show();
+		//$('#canvas').show();
 		
 		var page = "page" + ((pg != null) ? pg : getPage()); //$('.sample-docs').turn('page'));  
 		var context = $('#canvas')[0].getContext('2d');
@@ -405,11 +448,11 @@ function loadCanvas(pg) {
 		
 		
 	}else{		
-		$('#canvas').show();
+		//$('#canvas').show();
 		
 		var pg = (pg != null) ? pg : getPage();
 		pg = parseInt(pg);
-		gpg = (pg % 2 == 1) ? pg - 1 : pg; 
+		var gpg = (pg % 2 == 1) ? pg - 1 : pg; 
 		
 		var page = "page" + gpg;
 		var context = $('#canvas')[0].getContext('2d');
@@ -419,10 +462,12 @@ function loadCanvas(pg) {
 			imageObj.onload = function() {				
 				if(pg % 2 == 0){
 					//console.log('pg1 = '+pg);
-					context.drawImage(this, 0, 0, window.dW, window.dH * window.zoom, 0, 0, Math.floor(window.dW * window.zoom), Math.floor(window.dH * window.zoom));
+					//context.drawImage(this, 0, 0, window.dW, window.dH * window.zoom, 0, 0, Math.floor(window.dW * window.zoom), Math.floor(window.dH * window.zoom));
+					context.drawImage(this, 0, 0, window.dW, window.dH, 0, 0, Math.floor(window.dW * window.zoom), Math.floor(window.dH * window.zoom));
 				}else{
 					//console.log('pg2 = '+pg);
-					context.drawImage(this, window.dW, 0, window.dW, window.dH * window.zoom, 0, 0, Math.floor(window.dW * window.zoom), Math.floor(window.dH * window.zoom));
+					//context.drawImage(this, window.dW, 0, window.dW, window.dH * window.zoom, 0, 0, Math.floor(window.dW * window.zoom), Math.floor(window.dH * window.zoom));
+					context.drawImage(this, window.dW, 0, window.dW, window.dH, 0, 0, Math.floor(window.dW * window.zoom), Math.floor(window.dH * window.zoom));
 				}
 			};
 			imageObj.src = data;
@@ -481,7 +526,7 @@ function prepareSize() {
 	drawingAreaX = 0;
 	drawingAreaY = 30;
 	drawingAreaWidth = window.nW;
-	drawingAreaHeight = window.nH - 60;
+	drawingAreaHeight = window.nH * window.zoom - 60;
 	
 	$('.turnjs-slider').css({'margin':'0 auto'});
 	$('.bGroup').width(window.nW).height(35).css({'left':window.fixLeft,'top':window.nH+10});	
@@ -512,16 +557,9 @@ function btnEvent(){
 			if($(this).hasClass('clk')){
 				$(this).removeClass('clk');
 				stopZoom();		
-				//$('.bNote').show();	
-				//$('.bTrash').show();									
-				//$('.bTool').show();
 			}else{	
 				$(this).addClass('clk');						
 				startZoom();
-				//$('.bNote').hide();
-				//$('.bTrash').hide();
-				//$('.bTool').hide();
-				//$('.bExt').hide();
 			}
 		break;
 		case $(this).hasClass('bNote'):
@@ -531,13 +569,23 @@ function btnEvent(){
 			if($(this).hasClass('clk')){
 				$(this).removeClass('clk');
 				$('.bExt').fadeOut();
+				
 				stopDraw();
 				$('.sample-docs').turn("disable", false);
+				var drag = $('#drawDiv').draggable('instance');
+				if(drag != 'undefined'){
+					startDrag();
+				}
 			}else{	
 				$(this).addClass('clk');						
 				$('.bExt').fadeIn();
+				
 				startDraw();	
-				$('.sample-docs').turn("disable", true);				
+				$('.sample-docs').turn("disable", true);
+				var drag = $('#drawDiv').draggable('instance');
+				if(drag != 'undefined'){
+					stopDrag();
+				}
 			}
 			saveCanvas();	
 		break;
@@ -702,28 +750,38 @@ function openBook(o, t){
 				currentPage = book.turn('page'),
 				pages = book.turn('pages');
 				
+				console.log('s0');
 				if(opt == 'double'){
+					console.log('s01');
+					/*
 					if (currentPage>3 && currentPage<pages-3) {
+						console.log('s10');
 						if (page==1) {
+							console.log('s1');
 							book.turn('page', 2).turn('stop').turn('page', page);
 							e.preventDefault();
 							return;
 						} else if (page==pages) {
+							console.log('s2');
 							book.turn('page', pages-1).turn('stop').turn('page', page);
 							e.preventDefault();
 							return;
 						}
 					} else if (page>3 && page<pages-3) {
+						console.log('s30');
 						if (currentPage==1) {
+							console.log('s3');
 							book.turn('page', 2).turn('stop').turn('page', page);
 							e.preventDefault();
 							return;
 						} else if (currentPage==pages) {
+							console.log('s4');
 							book.turn('page', pages-1).turn('stop').turn('page', page);
 							e.preventDefault();
 							return;
 						}
 					}
+					*/
 				}
 				
 				Hash.go('page/'+page).update();
@@ -731,7 +789,6 @@ function openBook(o, t){
 				if (page==1 || page==pages){
 					$('.sample-docs .tabs').hide();
 				}
-
 			},
 
 			turned: function(e, page, view) {
@@ -767,7 +824,11 @@ function openBook(o, t){
 					var pageExt = Math.floor(page / window.viewPages) * window.viewPages;
 					loadCanvas(pageExt);
 					loadNotes(pageExt);
-				}	
+				}
+
+				//fix pos top
+				$('#drawDiv').offset({ top: 0 });
+				$('.p' + page +' img').offset({ top: 0 });
 			},
 
 			start: function(e, pageObj) {
@@ -788,8 +849,7 @@ function openBook(o, t){
 
 			},
 
-			missing: function (e, pages) {
-
+			missing: function (e, pages) {				
 				for (var i = 0; i < pages.length; i++)
 					addPage(pages[i], $(this));
 

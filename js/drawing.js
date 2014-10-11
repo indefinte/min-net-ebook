@@ -1,18 +1,4 @@
 
-// Copyright 2010 William Malone (www.williammalone.com)
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 var canvas;
 var context;
 var canvasWidth = 960;
@@ -23,14 +9,7 @@ var colorPurple = "#cb3594";
 var colorGreen = "#659b41";
 var colorYellow = "#ffcf33";
 var colorBrown = "#986928";
-var outlineImage = new Image();
-var crayonImage = new Image();
-var markerImage = new Image();
-var eraserImage = new Image();
-var crayonBackgroundImage = new Image();
-var markerBackgroundImage = new Image();
-var eraserBackgroundImage = new Image();
-var crayonTextureImage = new Image();
+
 var clickX = new Array();
 var clickY = new Array();
 var clickColor = new Array();
@@ -50,33 +29,7 @@ var drawingAreaX = 0;
 var drawingAreaY = 0;
 var drawingAreaWidth = 960;
 var drawingAreaHeight = 600;
-/*
-var drawingAreaX = 111;
-var drawingAreaY = 11;
-var drawingAreaWidth = 267;
-var drawingAreaHeight = 200;
-*/
-var toolHotspotStartY = 23;
-var toolHotspotHeight = 38;
-var sizeHotspotStartY = 157;
-var sizeHotspotHeight = 36;
-var sizeHotspotWidthObject = new Object();
-sizeHotspotWidthObject.huge = 39;
-sizeHotspotWidthObject.large = 25;
-sizeHotspotWidthObject.normal = 18;
-sizeHotspotWidthObject.small = 16;
-var totalLoadResources = 8;
-//var curLoadResNum = 0;
-var curLoadResNum = 8;
-/**
-* Calls the redraw function after all neccessary resources are loaded.
-*/
-function resourceLoaded()
-{
-	//if(++curLoadResNum >= totalLoadResources){
-		redraw();
-	//}
-}
+
 
 /**
 * Creates a canvas element, loads images, adds events, and draws the canvas for the first time.
@@ -102,7 +55,8 @@ function startDraw(){
 	//stopZoom();
 	
 	// Add touch events	
-	$('#canvas').on('touchstart',function(e){
+	/*
+	$('#drawDiv').on('touchstart',function(e){
 		var touchEvent = e.originalEvent.changedTouches[0];        
 		var mouseX = touchEvent.pageX - this.offsetLeft - window.fixLeft;
 		var mouseY = touchEvent.pageY - this.offsetTop;
@@ -111,48 +65,61 @@ function startDraw(){
 			redraw();
 		}
 	});
-    $('#canvas').on('touchmove',function(e){
+    $('#drawDiv').on('touchmove',function(e){
 		var touchEvent = e.originalEvent.changedTouches[0];
         e.preventDefault();
 		addClick(touchEvent.pageX - this.offsetLeft - window.fixLeft, touchEvent.pageY - this.offsetTop, true);
 		redraw();
 	});
-	$('#canvas').on('touchend',function(e){
+	$('#drawDiv').on('touchend',function(e){
 		paint = false;
 		//clearPoints
 		clearPoints();
 	});	
+	*/
 	// Add mouse events
 	// ----------------
-	$('#canvas').on('mousedown',function(e)
+	//$('#canvas').on('mousedown',function(e)
+	$('#drawDiv').on('mousedown',function(e)
 	{
 		// Mouse down location	
 		var mouseX = e.pageX - this.offsetLeft - window.fixLeft;
-		var mouseY = e.pageY - this.offsetTop;			
+		var mouseY = e.pageY - this.offsetTop;	
+		//console.log('----------------');
+		//console.log('e.pageY = ' + e.pageY);
+		//console.log('this.offsetTop = ' + this.offsetTop);
+		//console.log('mouseY = ' + mouseY);
+		
 		paint = true;
 		addClick(mouseX, mouseY, false);
 		redraw();
 	});	
-	$('#canvas').on('mousemove',function(e){
+	//$('#canvas').on('mousemove',function(e){
+	$('#drawDiv').on('mousemove',function(e){
 		if(paint==true){
 			//addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
-			addClick(e.pageX - this.offsetLeft - window.fixLeft, e.pageY - this.offsetTop, true);
+			var mouseX = e.pageX - this.offsetLeft - window.fixLeft;
+			var mouseY = e.pageY - this.offsetTop;
+			
+			addClick(mouseX, mouseY, true);
 			redraw();
 		}
 	});	
-	$('#canvas').on('mouseup',function(e){
+	//$('#canvas').on('mouseup',function(e){
+	$('#drawDiv').on('mouseup',function(e){
 		paint = false;
 	  	redraw();
 		clearPoints();	
 	});
-	$('#canvas').on('mouseleave',function(e){
+	//$('#canvas').on('mouseleave',function(e){
+	$('#drawDiv').on('mouseleave',function(e){
 		paint = false;
 	});
 }
 
 function stopDraw(){
 	console.log('stopDraw');
-	$('#canvas').off('touchstart touchmove mousedown mousemove mouseup mouseleave');   
+	$('#drawDiv').off('touchstart touchmove mousedown mousemove mouseup mouseleave');   
 	
 	clearPoints();
 	//ext
@@ -166,25 +133,70 @@ function startZoom(){
 	window.zoom = 2;
 	window.viewPages = 1;
 	var pg = getPage();
-	//prepareSize();
+
+	//fix
+	canvasHeight = window.nH * window.zoom;
+	canvas.setAttribute('width', window.nW);
+	canvas.setAttribute('height', window.nH * window.zoom);
+	if(typeof G_vmlCanvasManager != 'undefined') {
+		canvas = G_vmlCanvasManager.initElement(canvas);
+	}
+	context = canvas.getContext("2d");		
+	
+	
 	loadCanvas();
 	closeBook();
 	openBook('single', pg);
-	//console.log('pg = ' + pg);
 	
-	
-	
+	//
 	console.log('startZoom');
-	
-	
-	//console.log('page = ' + page);
 	
 	stopDraw();
 	//$('.sample-docs').turn('disable', true);
 	
 	//$('.p' + page + '>img').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom});	
-	$('#drawDiv').css({'width':window.dW * window.zoom,'height':window.dH * window.zoom});
-	$('#drawDiv canvas').css({'width':window.dW * window.zoom,'height':window.dH * window.zoom});
+	$('#drawDiv').css({'width':window.nW,'height':window.nH * window.zoom});
+	$('#drawDiv canvas').css({'width':window.nW,'height':window.nH * window.zoom});
+	
+	startDrag();		
+}
+
+function stopZoom(){
+	window.zoom = 1;
+	window.viewPages = 2;
+	var pg = getPage();
+	//var pageExt = Math.floor(pg / window.viewPages) * window.viewPages;	
+	
+	//fix
+	canvasHeight = window.nH * window.zoom;
+	canvas.setAttribute('width', window.nW);
+	canvas.setAttribute('height', window.nH * window.zoom);
+	if(typeof G_vmlCanvasManager != 'undefined') {
+		canvas = G_vmlCanvasManager.initElement(canvas);
+	}
+	context = canvas.getContext("2d");
+		
+	loadCanvas(pg);
+	
+	closeBook();
+	openBook('double', pg);
+	
+	console.log('stopZoom');	
+		
+	$('#drawDiv').css({'width':window.nW,'height':window.nH * window.zoom});
+	$('#drawDiv canvas').css({'width':window.nW,'height':window.nH * window.zoom});		
+	$('#drawDiv').offset({ top: 0, left: window.fixLeft });
+	
+	stopDrag();
+	
+	//ext
+	if($('.bZoom').hasClass('clk')){
+		$('.bZoom').removeClass('clk');
+	}
+}
+
+function startDrag(){
+	var pg = getPage();
 	
 	$('#drawDiv').draggable({
 		drag: function(event, ui) {
@@ -213,27 +225,8 @@ function startZoom(){
 	});
 }
 
-function stopZoom(){
-	window.zoom = 1;
-	window.viewPages = 2;
-	var pg = getPage();
-	//var pageExt = Math.floor(pg / window.viewPages) * window.viewPages;
-	loadCanvas(pg);
-	
-	closeBook();
-	openBook('double', pg);
-	
-	console.log('stopZoom');	
-		
-	$('#drawDiv').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom});
-	$('#drawDiv canvas').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom});	
+function stopDrag(){
 	$('#drawDiv').draggable('destroy');
-	$('#drawDiv').offset({ top: 0, left: window.fixLeft });
-	
-	//ext
-	if($('.bZoom').hasClass('clk')){
-		$('.bZoom').removeClass('clk');
-	}
 }
 
 /**
@@ -279,14 +272,11 @@ function resetCanvas()
 */
 function redraw()
 {
-	// Make sure required resources are loaded before redrawing
-	if(curLoadResNum < totalLoadResources){ return; }
-	
-	//clearCanvas();
-	
 	var locX;
 	var locY;
 	
+	//fix drawingAreaHeight
+	drawingAreaHeight = window.nH * window.zoom - 60;
 	
 	// Keep the drawing in the drawing area
 	context.save();
@@ -329,7 +319,7 @@ function redraw()
 			context.strokeStyle = clickColor[i];
 		}
 		context.lineJoin = "round";
-		context.lineWidth = radius;
+		context.lineWidth = radius * window.zoom;
 		context.stroke();
 		
 	}
@@ -337,15 +327,15 @@ function redraw()
 	context.restore();
 	
 	// Overlay a crayon texture (if the current tool is crayon)
+	/*
 	if(curTool == "crayon"){
 		context.globalCompositeOperation = "source-atop";
 		context.globalAlpha = 0.4; // No IE support
 		context.drawImage(crayonTextureImage, 0, 0, canvasWidth, canvasHeight);
 	}
+	*/
 	context.globalAlpha = 1; // No IE support
 	
-	// Draw the outline image
-	//context.drawImage(outlineImage, drawingAreaX, drawingAreaY, drawingAreaWidth, drawingAreaHeight);
 }
 
 
