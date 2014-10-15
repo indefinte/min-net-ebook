@@ -135,8 +135,9 @@ function startZoom(){
 	var pg = getPage();
 
 	//fix
+	canvasWidth = window.nW * window.zoom;//window.nW
 	canvasHeight = window.nH * window.zoom;
-	canvas.setAttribute('width', window.nW);
+	canvas.setAttribute('width', window.nW * window.zoom);//window.nW
 	canvas.setAttribute('height', window.nH * window.zoom);
 	if(typeof G_vmlCanvasManager != 'undefined') {
 		canvas = G_vmlCanvasManager.initElement(canvas);
@@ -152,24 +153,23 @@ function startZoom(){
 	console.log('startZoom');
 	
 	stopDraw();
-	//$('.sample-docs').turn('disable', true);
-	
-	//$('.p' + page + '>img').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom});	
-	$('#drawDiv').css({'width':window.nW,'height':window.nH * window.zoom});
-	$('#drawDiv canvas').css({'width':window.nW,'height':window.nH * window.zoom});
+
+	$('#drawDiv').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom}); //window.nW
+	$('#drawDiv canvas').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom}); //window.nW
 	
 	startDrag();		
 }
 
 function stopZoom(){
 	window.zoom = 1;
-	window.viewPages = 2;
+	window.viewPages = 1;//2
 	var pg = getPage();
 	//var pageExt = Math.floor(pg / window.viewPages) * window.viewPages;	
 	
 	//fix
+	canvasWidth = window.nW * window.zoom;//window.nW
 	canvasHeight = window.nH * window.zoom;
-	canvas.setAttribute('width', window.nW);
+	canvas.setAttribute('width', window.nW * window.zoom);//window.nW
 	canvas.setAttribute('height', window.nH * window.zoom);
 	if(typeof G_vmlCanvasManager != 'undefined') {
 		canvas = G_vmlCanvasManager.initElement(canvas);
@@ -179,7 +179,7 @@ function stopZoom(){
 	loadCanvas(pg);
 	
 	closeBook();
-	openBook('double', pg);
+	openBook('single', pg);//double
 	
 	console.log('stopZoom');	
 		

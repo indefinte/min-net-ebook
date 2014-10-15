@@ -48,12 +48,14 @@ body{
 
 .sample-docs .hard{
 	background-size: contain;
-	background-image: url(../pages/covers.png);
+	background-image: url(../pages/covers.jpg);
+	background-repeat: no-repeat;
 }
 
 .sample-docs .p-temporal{
 	background-size: contain;
-	background-image: url(../pages/covers.png);
+	background-image: url(../pages/covers.jpg);
+	background-repeat: no-repeat;
 }
 /*
 .sample-docs .p2{

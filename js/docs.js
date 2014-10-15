@@ -16,7 +16,7 @@ function loadPage(page) {
 	});
 	var target = page - 2;
 	target = target < 0 ? 'covers' : target; 
-	img.attr('src', 'pages/' + target + '.png');
+	img.attr('src', 'pages/' + target + '.jpg');
 
 }
 
@@ -37,7 +37,7 @@ function addPage(page, book) {
 function updateTabs() {
 	
 	//var tabs = {7: 'Clases', 12:'Constructor', 14:'Properties', 16:'Methods', 23:'Events'},
-	var tabs = {1:'封面', 3:'目錄', 4:'公園地景', 25:'最後頁'},
+	var tabs = {1:'封面', 6:'水文', 10:'公園', 19:'濕地', 36:'田野', 43:'認識動物'},
 		left = [],
 		right = [],
 		book = $('.sample-docs'),
