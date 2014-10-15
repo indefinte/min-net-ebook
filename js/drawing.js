@@ -117,7 +117,7 @@ function startDraw(){
 	});
 }
 
-function stopDraw(){
+function stopDraw(callback){
 	console.log('stopDraw');
 	$('#drawDiv').off('touchstart touchmove mousedown mousemove mouseup mouseleave');   
 	
@@ -127,6 +127,10 @@ function stopDraw(){
 		$('.bTool').removeClass('clk');
 		$('.bExt').fadeOut();
 	}
+	
+	if (callback && typeof(callback) === "function") {
+        callback();
+    }
 }
 
 function startZoom(){
@@ -134,6 +138,9 @@ function startZoom(){
 	window.viewPages = 1;
 	var pg = getPage();
 
+	closeBook();
+	openBook('single', pg);
+	
 	//fix
 	canvasWidth = window.nW * window.zoom;//window.nW
 	canvasHeight = window.nH * window.zoom;
@@ -144,27 +151,26 @@ function startZoom(){
 	}
 	context = canvas.getContext("2d");		
 	
-	
 	loadCanvas();
-	closeBook();
-	openBook('single', pg);
-	
+		
 	//
-	console.log('startZoom');
-	
-	stopDraw();
-
+	console.log('startZoom');	
 	$('#drawDiv').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom}); //window.nW
 	$('#drawDiv canvas').css({'width':window.nW * window.zoom,'height':window.nH * window.zoom}); //window.nW
 	
-	startDrag();		
+	stopDraw(function(){
+		startDrag();		
+	});	
 }
 
-function stopZoom(){
+function stopZoom(callback){
 	window.zoom = 1;
 	window.viewPages = 1;//2
 	var pg = getPage();
 	//var pageExt = Math.floor(pg / window.viewPages) * window.viewPages;	
+		
+	closeBook();
+	openBook('single', pg);//double	
 	
 	//fix
 	canvasWidth = window.nW * window.zoom;//window.nW
@@ -175,17 +181,14 @@ function stopZoom(){
 		canvas = G_vmlCanvasManager.initElement(canvas);
 	}
 	context = canvas.getContext("2d");
-		
-	loadCanvas(pg);
 	
-	closeBook();
-	openBook('single', pg);//double
+	loadCanvas(pg);	
 	
 	console.log('stopZoom');	
 		
 	$('#drawDiv').css({'width':window.nW,'height':window.nH * window.zoom});
 	$('#drawDiv canvas').css({'width':window.nW,'height':window.nH * window.zoom});		
-	$('#drawDiv').offset({ top: 0, left: window.fixLeft });
+	$('#drawDiv').offset({ top: 0, left: window.fixLeft });		
 	
 	stopDrag();
 	
@@ -193,6 +196,10 @@ function stopZoom(){
 	if($('.bZoom').hasClass('clk')){
 		$('.bZoom').removeClass('clk');
 	}
+	
+	if (callback && typeof(callback) === "function") {
+        callback();
+    }
 }
 
 function startDrag(){
@@ -225,8 +232,12 @@ function startDrag(){
 	});
 }
 
-function stopDrag(){
+function stopDrag(callback){
 	$('#drawDiv').draggable('destroy');
+	
+	if (callback && typeof(callback) === "function") {
+        callback();
+    }
 }
 
 /**
@@ -257,24 +268,25 @@ function clearPoints(){
 	clickDrag = new Array();
 }
 
-function clearCanvas()
+function clearCanvas(callback)
 {
 	context.clearRect(0, 0, canvasWidth, canvasHeight);
+	
+	if (callback && typeof(callback) === "function") {
+        callback();
+    }
 }
 
-function resetCanvas()
+function resetCanvas(callback)
 {
 	clearPoints();
-	clearCanvas();
+	clearCanvas(callback);
 }
 /**
 * Redraws the canvas.
 */
 function redraw()
 {
-	var locX;
-	var locY;
-	
 	//fix drawingAreaHeight
 	drawingAreaHeight = window.nH * window.zoom - 60;
 	
@@ -326,14 +338,6 @@ function redraw()
 	//context.globalCompositeOperation = "source-over";// To erase instead of draw over with white
 	context.restore();
 	
-	// Overlay a crayon texture (if the current tool is crayon)
-	/*
-	if(curTool == "crayon"){
-		context.globalCompositeOperation = "source-atop";
-		context.globalAlpha = 0.4; // No IE support
-		context.drawImage(crayonTextureImage, 0, 0, canvasWidth, canvasHeight);
-	}
-	*/
 	context.globalAlpha = 1; // No IE support
 	
 }

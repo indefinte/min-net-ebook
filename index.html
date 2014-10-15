@@ -477,7 +477,7 @@ function saveCanvas(){
 	}	
 	*/
 }
-function loadCanvas(pg) {
+function loadCanvas(pg) {	
 	resetCanvas();
 	var page = "page" + ((pg != null) ? pg : getPage());
 	var context = $('#canvas')[0].getContext('2d');
@@ -606,11 +606,11 @@ function btnEvent(){
 	switch(true){
 		case $(this).hasClass('bZoom'):						
 			if($(this).hasClass('clk')){
-				$(this).removeClass('clk');				
-				stopZoom();		
+				$(this).removeClass('clk');
+				stopZoom();				
 			}else{	
 				$(this).addClass('clk');						
-				startZoom();
+				startZoom();			
 			}
 		break;
 		case $(this).hasClass('bNote'):
