@@ -91,11 +91,12 @@
 		z-index: 29999;
 	}
 	
+	.aGroup { position: absolute; width: 30%; height: 40px; right: 100px; bottom: 10px; z-index: 999; overflow: auto; }	
 	.bGroup { position: absolute; left: 0; top: 0; }
 	.btn {
 		float: left;
 		cursor: pointer;
-		border: 1px solid #5252FF;		
+		border: 1px solid #000;		
 		width: 32px;
 		height: 32px;
 		text-align: center;
@@ -103,12 +104,13 @@
 		-webkit-border-radius: 16px;
 		-moz-border-radius: 16px;
 		border-radius: 16px;
-		margin-right: 2px;		
+		margin-right: 2px;
+		box-shadow: 0 1px 3px rgba(0,0,0,0.5);		
 	}
 	.btnOne {
 		position: absolute;
 		cursor: pointer;
-		border: 1px solid #5252FF;		
+		border: 1px solid #000;		
 		width: 32px;
 		height: 32px;
 		text-align: center;
@@ -117,6 +119,7 @@
 		-webkit-border-radius: 16px;
 		-moz-border-radius: 16px;
 		border-radius: 16px;
+		box-shadow: 0 1px 3px rgba(0,0,0,0.5);
 	}	
 	.bExt { display: none; }
 	
@@ -140,6 +143,8 @@
 		-webkit-border-bottom-right-radius: 0; -moz-border-radius-bottomright: 0; border-bottom-right-radius: 0;		
 	}
 	
+	.bAudio { float: right; margin-left: 10px; color: #003870; background-color: #E0E0E0; background-repeat: no-repeat; background-position: center; background-image: url(images/audio.png); }		
+	
 	.bPurple { color: #003870; background-color: #B8008A; }
 	.bGreen { color: #003870; background-color: #8BD864; }
 	.bYellow { color: #003870; background-color: #FFFF3D; }
@@ -152,6 +157,8 @@
 	.bEraser:hover { background-color: #FFFFFF; }
 	.bTrash:hover { background-color: rgba(224,224,224,.3);#E0E0E0; }
 
+	.bAudio:hover { background-color: #FFFFFF; }
+	
 	.bPurple:hover { background-color: #FF5CAD; }
 	.bGreen:hover { background-color: #AFE495; }
 	.bYellow:hover { background-color: #FFFF7A; }
@@ -192,9 +199,18 @@
 	<div class="btn bExt bYellow" title="黃色筆刷"></div>
 	<div class="btn bExt bBrown" title="棕色筆刷"></div>
 </div>
+
+<div class="aGroup">
+	<div class="btn bAudio" rel="1.mp3" title="聆聽 demo1"></div>
+	<div class="btn bAudio" rel="2.wav" title="聆聽 demo2"></div>
+	<div class="btn bAudio" rel="3.wav" title="聆聽 demo3"></div>
+</div>
+
 <div class="pGroup">
 	<div class="pGroupPg"></div>
 </div>
+
+<audio id="ado"></audio>
 
 <script type="text/javascript">
 document.onselectstart = new function(){ return false; }
@@ -204,6 +220,20 @@ window.allPages = 49; //26[0-25 + covers] 47[0-46 + covers]
 window.viewPages = 1; //2
 window.zoom = 1;
 window.originStyle = '';
+
+function pauseAudio(){
+	//if (typeof Media === 'undefined') {	
+		$('#ado')[0].pause();
+	//}
+}
+function playAudio(i){	
+	//if (typeof Media === 'undefined') {	
+		pauseAudio();
+		i = i || '1.mp3';
+		$('#ado')[0].src = './audio/' + i;
+		$('#ado')[0].play();
+	//}	
+}
 
 function addNote(){
 	jPrompt('', '', '加入註記', function(m) {
@@ -600,7 +630,9 @@ function prepareSize() {
 	drawingAreaHeight = window.nH * window.zoom - 60;
 	
 	$('.turnjs-slider').css({'margin':'0 auto'});
-	$('.bGroup').width(window.nW).height(35).css({'left':window.fixLeft,'top':window.nH+10});	
+	$('.bGroup').width(Math.floor(window.nW/2)).height(35).css({'left':window.fixLeft,'top':window.nH+10});	
+	
+	$('.aGroup').width(Math.floor(window.nW/2)).height(35).css({'right':window.fixLeft,'top':window.nH+10});	
 	
 	window.originStyle = $('.sample-docs').attr('style');
 }
@@ -625,6 +657,9 @@ function btnPageEvent(e){
 }
 function btnEvent(){			
 	switch(true){
+		case $(this).hasClass('bAudio'):
+			playAudio($(this).attr('rel'));
+		break;
 		case $(this).hasClass('bZoom'):						
 			if($(this).hasClass('clk')){
 				$(this).removeClass('clk');
