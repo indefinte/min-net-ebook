@@ -69,7 +69,7 @@
 		left: 0;
 	}
 
-	#bookDiv { position: absolute; z-index: 1; }
+	#bookDiv { position: absolute; z-index: 1; box-shadow: 0 3px 10px rgba(0,0,0,0.5); }
 	#drawDiv { position: absolute; width: 960px; height: 600px; z-index: 9999; left: 0; top: 0; display: none; }
 	#noteDive { position: absolute; left: 0; top: 0; }
 	.nt {
@@ -91,7 +91,31 @@
 		z-index: 29999;
 	}
 	
-	.aGroup { position: absolute; width: 30%; height: 40px; right: 100px; bottom: 10px; z-index: 999; overflow: auto; }	
+	.aGroup { 
+		position: absolute; width: 85px; right: -80px; top: 60px; bottom: 40px; z-index: 999; -webkit-transition: right .4s; transition: right .4s;
+		background-color: rgba(128,153,0,.3);
+		background-image: url(images/left.png);
+		background-repeat:no-repeat;
+		background-position: 10px top;
+		padding: 30px 10px 10px 10px;
+		-webkit-border-top-right-radius: 0; -moz-border-radius-topright: 0; border-top-right-radius: 0;
+		-webkit-border-top-left-radius: 16px; -moz-border-radius-topleft: 16px; border-top-left-radius: 16px;
+		-webkit-border-bottom-right-radius: 0; -moz-border-radius-bottomright: 0; border-bottom-right-radius: 0;
+		-webkit-border-bottom-left-radius: 16px; -moz-border-radius-bottomleft: 16px; border-bottom-left-radius: 16px;	
+	}
+	.aGroupPg {
+		width: 100%;
+		height: 100%;
+		overflow: auto;	
+	}
+	.aGroup:hover{
+		background-image: url(images/right.png);
+		right: 0;
+	}
+	/*
+	.aGroup { position: absolute; width: 30%; height: 45px; right: 100px; bottom: 5px; z-index: 999; overflow-x: auto; overflow-y: hidden; }	
+	.aGroup > div { width: 1512px; }
+	*/
 	.bGroup { position: absolute; left: 0; top: 0; }
 	.btn {
 		float: left;
@@ -143,8 +167,26 @@
 		-webkit-border-bottom-right-radius: 0; -moz-border-radius-bottomright: 0; border-bottom-right-radius: 0;		
 	}
 	
-	.bAudio { float: right; margin-left: 10px; color: #003870; background-color: #E0E0E0; background-repeat: no-repeat; background-position: center; background-image: url(images/audio.png); }		
-	
+	.bAudio { /* float: right; */ margin: 0 10px 30px 15px; color: #003870; background-color: #E0E0E0; background-repeat: no-repeat; background-position: center; background-image: url(images/audio.png); }		
+	.bAudio:after{
+		content: attr(title);
+		display: inline-block;
+		position: relative;
+		color: #385000;
+		font-size: 9px;
+		bottom: -30px;
+		max-width: 50px;
+		overflow: hidden;
+		text-align: center;
+		white-space: nowrap;
+		font-weight: normal;
+		/* 
+		background-color: #f8aa04;
+		border-radius: 3px; 
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+		padding: 1px 3px;
+		*/				
+	}
 	.bPurple { color: #003870; background-color: #B8008A; }
 	.bGreen { color: #003870; background-color: #8BD864; }
 	.bYellow { color: #003870; background-color: #FFFF3D; }
@@ -201,9 +243,36 @@
 </div>
 
 <div class="aGroup">
-	<div class="btn bAudio" rel="1.mp3" title="聆聽 demo1"></div>
-	<div class="btn bAudio" rel="2.wav" title="聆聽 demo2"></div>
-	<div class="btn bAudio" rel="3.wav" title="聆聽 demo3"></div>
+	<div class="aGroupPg">
+		<div class="btn bAudio" rel="1_八色鳥.mp3" title="八色鳥"></div>
+		<div class="btn bAudio" rel="2_大卷尾.mp3" title="大卷尾"></div>
+		<div class="btn bAudio" rel="3_大冠鷲.mp3" title="大冠鷲"></div>
+		<div class="btn bAudio" rel="4_小雨燕.mp3" title="小雨燕"></div>
+		<div class="btn bAudio" rel="5_小啄木.mp3" title="小啄木"></div>
+		<div class="btn bAudio" rel="6_小彎嘴玉.mp3" title="小彎嘴玉"></div>
+		<div class="btn bAudio" rel="7_山紅頭.mp3" title="山紅頭"></div>
+		<div class="btn bAudio" rel="8_五色鳥.mp3" title="五色鳥"></div>
+		<div class="btn bAudio" rel="9_白頭翁.mp3" title="白頭翁"></div>
+		<div class="btn bAudio" rel="10_白鶺鴒.mp3" title="白鶺鴒"></div>
+		<div class="btn bAudio" rel="11_朱頸斑鳩.mp3" title="朱頸斑鳩"></div>
+		<div class="btn bAudio" rel="12_灰頭鷦鶯.mp3" title="灰頭鷦鶯"></div>
+		<div class="btn bAudio" rel="13_赤腰燕.mp3" title="赤腰燕"></div>
+		<div class="btn bAudio" rel="14_夜鷹.mp3" title="夜鷹"></div>
+		<div class="btn bAudio" rel="15_洋燕.mp3" title="洋燕"></div>
+		<div class="btn bAudio" rel="16_紅尾伯勞.mp3" title="紅尾伯勞"></div>
+		<div class="btn bAudio" rel="17_紅冠水雞.mp3" title="紅冠水雞"></div>
+		<div class="btn bAudio" rel="18_繡眼畫眉.mp3" title="繡眼畫眉"></div>
+		<div class="btn bAudio" rel="19_紅嘴黑鵯.mp3" title="紅嘴黑鵯"></div>
+		<div class="btn bAudio" rel="20_家八哥.mp3" title="家八哥"></div>
+		<div class="btn bAudio" rel="21_麻雀.mp3" title="麻雀"></div>
+		<div class="btn bAudio" rel="22_喜鵲.mp3" title="喜鵲"></div>
+		<div class="btn bAudio" rel="23_黃鸝.mp3" title="黃鸝"></div>
+		<div class="btn bAudio" rel="24_黑枕藍鶲.mp3" title="黑枕藍鶲"></div>
+		<div class="btn bAudio" rel="25_翠鳥.mp3" title="翠鳥"></div>
+		<div class="btn bAudio" rel="26_翠翼鳩.mp3" title="翠翼鳩"></div>
+		<div class="btn bAudio" rel="27_褐頭鷦鶯_.mp3" title="褐頭鷦鶯"></div>
+		<div class="btn bAudio" rel="28_樹鵲.mp3" title="樹鵲"></div>	
+	</div>
 </div>
 
 <div class="pGroup">
@@ -632,7 +701,7 @@ function prepareSize() {
 	$('.turnjs-slider').css({'margin':'0 auto'});
 	$('.bGroup').width(Math.floor(window.nW/2)).height(35).css({'left':window.fixLeft,'top':window.nH+10});	
 	
-	$('.aGroup').width(Math.floor(window.nW/2)).height(35).css({'right':window.fixLeft,'top':window.nH+10});	
+	//$('.aGroup').width(Math.floor(window.nW/2)).height(65).css({'right':window.fixLeft,'top':window.nH+10});	
 	
 	window.originStyle = $('.sample-docs').attr('style');
 }
