@@ -320,6 +320,9 @@ function addNoteDiv(s,l,t){
 	t = t > window.nH ? Math.floor(window.nH / 2) : t;
 	
 	var o = $('<div class="nt">' + s + '</div>').appendTo('#noteDiv').draggable({
+		start: function(event, ui) {
+			$('.bTrash').fadeIn();
+		},
 		drag: function(event, ui) {			
 			if(window.nH < $(this).height()){
 				//可視範圍 < 文件範圍
@@ -359,6 +362,7 @@ function addNoteDiv(s,l,t){
 		},
 		stop : function(event, ui){
 			saveNotes();
+			$('.bTrash').hide();
 		},
 		scroll: false,
 		cursor: 'move'		
@@ -895,6 +899,7 @@ function loadApp() {
 			//console.log(ui.draggable);
 			ui.draggable.remove();
 			saveNotes();
+			$(this).hide();
 		}
    });
 }
@@ -983,11 +988,11 @@ function openBook(o, t){
 				if(page!=1){
 					// && window.zoom == 1
 					$('.bNote').show();//.fadeIn();
-					$('.bTrash').show();//.fadeIn();
+					//$('.bTrash').show();//.fadeIn();
 					$('.bTool').show();//.fadeIn();	
 				}else{
 					$('.bNote').hide();//.fadeOut();
-					$('.bTrash').hide();//.fadeOut();
+					//$('.bTrash').hide();//.fadeOut();
 					$('.bTool').hide();//.fadeOut();	
 				}
 				
