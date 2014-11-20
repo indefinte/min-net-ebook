@@ -37,7 +37,7 @@ function addPage(page, book) {
 function updateTabs() {
 	
 	//var tabs = {7: 'Clases', 12:'Constructor', 14:'Properties', 16:'Methods', 23:'Events'},
-	var tabs = {1:'封面', 6:'水文', 10:'公園', 19:'濕地', 36:'田野', 43:'認識動物'},
+	var tabs = {1:'封面', 4:'目錄', 13:'公園', 22:'濕地', 39:'田野', 46:'認識動物'},
 		left = [],
 		right = [],
 		book = $('.sample-docs'),
