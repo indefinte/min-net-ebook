@@ -134,7 +134,7 @@ function stopDraw(callback){
 }
 
 function startZoom(){
-	window.zoom = 2;
+	window.zoom = 4;
 	window.viewPages = 1;
 	var pg = getPage();
 
@@ -287,6 +287,7 @@ function resetCanvas(callback)
 */
 function redraw()
 {
+	drawingAreaWidth = window.nW * window.zoom;
 	//fix drawingAreaHeight
 	drawingAreaHeight = window.nH * window.zoom - 60;
 	
